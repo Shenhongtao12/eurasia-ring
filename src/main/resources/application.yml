@@ -1,0 +1,28 @@
+#修改端口号
+server:
+#  port: 8877
+  port: 443
+  ssl:
+    key-store: 3831113_eurasia.plus.pfx
+    key-store-password: fdfvPR4Q
+#配置数据库
+database:
+  url: jdbc:mysql://47.93.240.205:3306/eurasia?characterEncoding=utf8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true
+  username: root
+  password: kindy0916
+spring:
+  datasource:
+    url: ${database.url}
+    username: ${database.username}
+    password: ${database.password}
+    #使用阿里巴巴Druid数据源
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  servlet:
+    multipart:
+      max-file-size: 10MB # 限制文件上传的大小
+      enabled: true  #是否启用文件上传功能
+WX_DATA:
+  appid: wx72280998498b78c9
+  secret: e3198aacefab2c8b8684ea8573dc94bd
+  grant_type: authorization_code
