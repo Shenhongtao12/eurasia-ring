@@ -33,4 +33,13 @@ public class MatterController {
     public ResponseEntity<JsonData> delete(@RequestParam(name = "id") Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(matterService.delete(id));
     }
+
+    @GetMapping("{matterId}")
+    public ResponseEntity<JsonData> findById(@PathVariable(name = "matterId") Long matterId){
+        Matter result = matterService.findById(matterId);
+        if (result == null) {
+            return ResponseEntity.ok(JsonData.buildError("不存在的matterId：" + matterId));
+        }
+        return ResponseEntity.ok(JsonData.buildSuccess(result, ""));
+    }
 }

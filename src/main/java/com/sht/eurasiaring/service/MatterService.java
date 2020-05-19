@@ -51,4 +51,11 @@ public class MatterService {
         Page<Matter> page = matterDao.findAll(PageRequest.of(0, 4));
         return new PageResult<>(page.getTotalElements(), page.getTotalPages(), page.getContent());
     }
+
+    public Matter findById(Long matterId) {
+        Matter matter = matterDao.findById(matterId).get();
+        System.out.println("11111111111"+matter);
+        //matter.setCommentList();
+        return matter;
+    }
 }
