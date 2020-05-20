@@ -36,7 +36,7 @@ public class MatterController {
 
     @GetMapping("{matterId}")
     public ResponseEntity<JsonData> findById(@PathVariable(name = "matterId") Long matterId){
-        Matter result = matterService.findById(matterId);
+        Matter result = matterService.findById(matterId, 3L);
         if (result == null) {
             return ResponseEntity.ok(JsonData.buildError("不存在的matterId：" + matterId));
         }

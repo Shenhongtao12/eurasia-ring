@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping({"api/token/reply"})
+@RequestMapping({"ring/reply"})
 public class ReplyController {
 
     @Autowired

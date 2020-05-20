@@ -20,7 +20,7 @@ public class EurasiaRingApplication {
         SpringApplication.run(EurasiaRingApplication.class, args);
 
     }
-    @Bean
+    /*@Bean
     public ServletWebServerFactory servletContainer() {
 
         TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory() {
@@ -38,7 +38,7 @@ public class EurasiaRingApplication {
         };
         tomcat.addAdditionalTomcatConnectors(initiateHttpConnector());
         return tomcat;
-    }
+    }*/
 
     /**
      * 让我们的应用支持HTTP是个好想法，但是需要重定向到HTTPS，
@@ -46,12 +46,12 @@ public class EurasiaRingApplication {
      * 所以要以编程的方式配置HTTP connector，然后重定向到HTTPS connector
      * @return Connector
      */
-    private Connector initiateHttpConnector() {
+    /*private Connector initiateHttpConnector() {
         Connector connector = new Connector("org.apache.coyote.http11.Http11NioProtocol");
         connector.setScheme("http");
         connector.setPort(8877); // http端口
         connector.setSecure(false);
         connector.setRedirectPort(443); // application.properties中配置的https端口
         return connector;
-    }
+    }*/
 }

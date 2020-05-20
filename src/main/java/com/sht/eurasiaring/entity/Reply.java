@@ -3,10 +3,7 @@ package com.sht.eurasiaring.entity;
 import lombok.Data;
 import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 
@@ -19,6 +16,7 @@ import java.util.List;
 @DynamicUpdate
 public class Reply implements Serializable {
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String createTime;
 	private String content;

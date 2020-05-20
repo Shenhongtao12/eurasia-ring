@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 @Service
 @Transactional
@@ -27,5 +29,14 @@ public class CommentService {
         int num = replyService.deleteByCommentId(id);
         commentRepository.deleteById(id);
         return JsonData.buildSuccess("删除成功,并删除"+ num + "条回复内容");
+    }
+
+    //根据MatterId查询留言回复
+    public List<Comment> findByMatterId(Long matterId, Long userId){
+        List<Comment> commentList = commentRepository.findByMatterId(matterId);
+        for (Comment comment : commentList) {
+            comment.setReplyList(replyService.getTreeReply(comment.getCommentId(), userId));
+        }
+        return commentList;
     }
 }

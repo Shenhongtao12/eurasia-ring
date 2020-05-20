@@ -21,6 +21,9 @@ public class MatterService {
     @Autowired
     private MatterRepository matterRepository;
 
+    @Autowired
+    private CommentService commentService;
+
     public JsonData save(Matter matter) {
         if (StringUtils.isEmpty(matter.getUserId())){
             return JsonData.buildError("数据错误，未关联用户");
@@ -50,10 +53,9 @@ public class MatterService {
         return new PageResult<>(page.getTotalElements(), page.getTotalPages(), page.getContent());
     }
 
-    public Matter findById(Long matterId) {
+    public Matter findById(Long matterId, Long userId) {
         Matter matter = matterRepository.findById(matterId).get();
-        System.out.println("11111111111"+matter);
-        //matter.setCommentList();
+        matter.setCommentList(commentService.findByMatterId(matterId, userId));
         return matter;
     }
 }

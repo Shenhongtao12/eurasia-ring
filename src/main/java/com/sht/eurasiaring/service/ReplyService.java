@@ -43,17 +43,18 @@ public class ReplyService {
         reply.setCreateTime(DateUtils.dateToString());
 
         if (reply.getLeaf() != 0) {
-            //this.replyRepository.updateLeaf(reply.getLeaf());
-            reply.setParentId(reply.getLeaf());
+            Reply reply1 = replyRepository.findById(reply.getLeaf()).get();
+            reply1.setLeaf(1L);
+            replyRepository.save(reply1);
         }
         reply.setParentId(reply.getLeaf());
         reply.setLeaf(0L);
-//        int i = this.replyRepository.insertSelective(reply);
-        Optional<Reply> originalReply = replyRepository.findById(reply.getId());
+        System.out.println("回复留言: " + reply);
+        replyRepository.save(reply);
+        /*Optional<Reply> originalReply = replyRepository.findById(reply.getId());
         if (originalReply.isPresent()) {
             JpaUtils.copyNotNullProperties(reply, originalReply.get());
-        }
-        replyRepository.save(reply);
+        }*/
 
         if (!reply.getUserId().equals(reply.getNameId())) {
             //this.redisTemplate.boundValueOps(String.valueOf(reply.getNameid())).increment(1);
@@ -65,6 +66,8 @@ public class ReplyService {
         this.replyRepository.deleteById(id);
         return JsonData.buildSuccess("成功");
     }
+
+
 
 
     //查看与我相关
