@@ -1,6 +1,6 @@
 package com.sht.eurasiaring;
 
-import com.sht.eurasiaring.dao.ClassifyDao;
+import com.sht.eurasiaring.repository.ClassifyRepository;
 import com.sht.eurasiaring.entity.Classify;
 import com.sht.eurasiaring.entity.Matter;
 import com.sht.eurasiaring.entity.User;
@@ -10,7 +10,6 @@ import com.sht.eurasiaring.utils.PageResult;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
 
 import java.util.Map;
 import java.util.Optional;
@@ -21,7 +20,7 @@ class EurasiaRingApplicationTests {
     private UserService userService;
 
     @Autowired
-    ClassifyDao classifyDao;
+    ClassifyRepository classifyRepository;
 
     @Autowired
     private MatterService matterService;
@@ -38,7 +37,7 @@ class EurasiaRingApplicationTests {
 
     @Test
     void test1(){
-        Optional<Classify> byId = classifyDao.findById(1L);
+        Optional<Classify> byId = classifyRepository.findById(1L);
         System.out.println(byId);
         System.out.println(byId.get());
         System.out.println(byId.isPresent());

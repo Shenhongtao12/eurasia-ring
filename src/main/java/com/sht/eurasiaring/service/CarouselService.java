@@ -1,6 +1,6 @@
 package com.sht.eurasiaring.service;
 
-import com.sht.eurasiaring.dao.CarouselDao;
+import com.sht.eurasiaring.repository.CarouselRepository;
 import com.sht.eurasiaring.entity.Carousel;
 import com.sht.eurasiaring.utils.JsonData;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,22 +16,22 @@ import java.util.Optional;
 @Service
 public class CarouselService {
     @Autowired
-    private CarouselDao carouselDao;
+    private CarouselRepository carouselRepository;
 
     public void save(Carousel carousel) {
-        carouselDao.save(carousel);
+        carouselRepository.save(carousel);
     }
 
     public JsonData update(Carousel carousel) {
-        Optional<Carousel> carouselOptional = carouselDao.findById(carousel.getId());
+        Optional<Carousel> carouselOptional = carouselRepository.findById(carousel.getId());
         if (!carouselOptional.isPresent()){
             return JsonData.buildError("数据错误");
         }
-        carouselDao.save(carousel);
+        carouselRepository.save(carousel);
         return JsonData.buildSuccess("更新成功");
     }
 
     public List<Carousel> findAll(){
-        return carouselDao.findAll();
+        return carouselRepository.findAll();
     }
 }

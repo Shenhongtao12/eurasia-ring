@@ -1,7 +1,7 @@
 package com.sht.eurasiaring.service;
 
 import com.alibaba.fastjson.JSON;
-import com.sht.eurasiaring.dao.UserDao;
+import com.sht.eurasiaring.repository.UserRepository;
 import com.sht.eurasiaring.entity.Carousel;
 import com.sht.eurasiaring.entity.Classify;
 import com.sht.eurasiaring.entity.User;
@@ -32,7 +32,7 @@ public class UserService {
     protected String GRANT_TYPE;
 
     @Autowired
-    private UserDao userDao;
+    private UserRepository userRepository;
 
     @Autowired
     private ClassifyService classifyService;
@@ -59,7 +59,7 @@ public class UserService {
         user1.setNickName(user.getNickName());
         user1.setAvatarUrl(user.getAvatarUrl());
         //查看该用户是否为老用户
-        User byOpenid = userDao.findByOpenid(user1.getOpenid());
+        User byOpenid = userRepository.findByOpenid(user1.getOpenid());
         if (byOpenid != null){
             //老用户就更新信息
             user1.setId(byOpenid.getId());
@@ -68,7 +68,7 @@ public class UserService {
             //新用户就设置首次登陆时间
             user1.setCreateTime(DateUtils.dateToString());
         }
-        userDao.save(user1);
+        userRepository.save(user1);
         String token = JwtUtils.geneJsonWebToken(user1);
         map.put("token", token);
         map.put("user", user);

@@ -1,6 +1,6 @@
 package com.sht.eurasiaring.service;
 
-import com.sht.eurasiaring.dao.ClassifyDao;
+import com.sht.eurasiaring.repository.ClassifyRepository;
 import com.sht.eurasiaring.entity.Classify;
 import com.sht.eurasiaring.utils.JsonData;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,22 +17,22 @@ import java.util.Optional;
 public class ClassifyService {
 
     @Autowired
-    private ClassifyDao classifyDao;
+    private ClassifyRepository classifyRepository;
 
     public Classify save(Classify classify) {
-        return classifyDao.save(classify);
+        return classifyRepository.save(classify);
     }
 
     public List<Classify> findAll(){
-        return classifyDao.findAll();
+        return classifyRepository.findAll();
     }
 
     public JsonData update(Classify classify) {
-        Optional<Classify> classifyOptional = classifyDao.findById(classify.getId());
+        Optional<Classify> classifyOptional = classifyRepository.findById(classify.getId());
         if (!classifyOptional.isPresent()){
             return JsonData.buildError("数据错误");
         }
-        classifyDao.save(classify);
+        classifyRepository.save(classify);
         return JsonData.buildSuccess("成功");
     }
 }
