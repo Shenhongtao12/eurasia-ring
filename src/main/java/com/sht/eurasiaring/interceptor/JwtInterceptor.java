@@ -39,8 +39,6 @@ public class JwtInterceptor extends HandlerInterceptorAdapter {
      *  3.将claims绑定到request域中
      */
 
-    @Autowired
-    private JwtUtils jwtUtils;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -51,10 +49,10 @@ public class JwtInterceptor extends HandlerInterceptorAdapter {
             //获取token数据
             String token = authorization.replace("Bearer ","");
             //解析token获取claims
-            Claims claims = jwtUtils.checkJWT(token);
+            Claims claims = JwtUtils.checkJWT(token);
             if(claims != null) {
                 //通过claims获取到当前用户的可访问API权限字符串
-                String apis = (String) claims.get("apis");  //api-user-delete,api-user-update
+                String id = (String) claims.get("id");  //api-user-delete,api-user-update
                 //通过handler
                 HandlerMethod h = (HandlerMethod) handler;
                 //获取接口上的reqeustmapping注解
@@ -62,7 +60,8 @@ public class JwtInterceptor extends HandlerInterceptorAdapter {
                 //获取当前请求接口中的name属性
                 String name = annotation.name();
                 //判断当前用户是否具有响应的请求权限
-                if(apis.contains(name)) {
+                //if(id.contains(name)) {
+                if(id != null) {
                     request.setAttribute("user_claims",claims);
                     return true;
                 }else {

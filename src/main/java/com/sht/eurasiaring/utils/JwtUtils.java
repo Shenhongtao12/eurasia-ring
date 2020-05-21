@@ -12,12 +12,12 @@ public class JwtUtils {
 	private static final long EXPIRE = 1000*60*60*24*7; //7天
 	private static final String APPSECRET = "e61451278486b545f860defcae13c19f";//"MD5", "sht666", "deal", 10
 
-	public String geneJsonWebToken(User user)
+	public static String geneJsonWebToken(User user)
 	{
 		String token;
 			token = Jwts.builder().setSubject(SUBJECT)
 					.claim("id", user.getId())
-					.claim("username", user.getNickName())
+					.claim("nickName", user.getNickName())
 					.claim("openid", user.getOpenid())
 					.claim("session_key", user.getSession_key())
 					.setIssuedAt(new Date())
@@ -28,7 +28,7 @@ public class JwtUtils {
 		return token;
 	}
 
-	public Claims checkJWT(String token){
+	public static Claims checkJWT(String token){
 		try {
 			return Jwts.parser().setSigningKey(APPSECRET).parseClaimsJws(token).getBody();
 		}catch (ExpiredJwtException e){
