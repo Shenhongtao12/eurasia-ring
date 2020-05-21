@@ -1,16 +1,18 @@
 package com.sht.eurasiaring.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
+import com.sht.eurasiaring.entity.Matter;
 import com.sht.eurasiaring.repository.ReplyRepository;
 import com.sht.eurasiaring.entity.Reply;
 import com.sht.eurasiaring.exception.AllException;
 import com.sht.eurasiaring.utils.DateUtils;
-import com.sht.eurasiaring.utils.JpaUtils;
 import com.sht.eurasiaring.utils.JsonData;
+import com.sht.eurasiaring.utils.MessageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,8 +23,13 @@ public class ReplyService {
     @Autowired
     private ReplyRepository replyRepository;
 
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+    @Autowired
+    private MatterService matterService;
 
-    public int deleteByCommentId(Long comid) {
+
+    public int deleteByCommentId(Integer comid) {
         return replyRepository.deleteByCommentId(comid);
     }
 
@@ -44,11 +51,11 @@ public class ReplyService {
 
         if (reply.getLeaf() != 0) {
             Reply reply1 = replyRepository.findById(reply.getLeaf()).get();
-            reply1.setLeaf(1L);
+            reply1.setLeaf(1);
             replyRepository.save(reply1);
         }
         reply.setParentId(reply.getLeaf());
-        reply.setLeaf(0L);
+        reply.setLeaf(0);
         System.out.println("回复留言: " + reply);
         replyRepository.save(reply);
         /*Optional<Reply> originalReply = replyRepository.findById(reply.getId());
@@ -57,37 +64,43 @@ public class ReplyService {
         }*/
 
         if (!reply.getUserId().equals(reply.getNameId())) {
-            //this.redisTemplate.boundValueOps(String.valueOf(reply.getNameid())).increment(1);
+            this.redisTemplate.boundValueOps("eurasia_"+reply.getNameId()).increment(1);
         }
         return JsonData.buildSuccess("回复成功");
     }
 
-    public JsonData delete(Long id) {
+    public JsonData delete(Integer id) {
         this.replyRepository.deleteById(id);
         return JsonData.buildSuccess("成功");
     }
 
 
-
-
     //查看与我相关
-    /*public JsonData findAllByUser(Integer userId) {
-        List<MessageUtils> list = this.replyDao.findReply(userId);
-        for (MessageUtils messageUtils : list) {
-            MessageUtils goods = this.replyDao.findGoods(messageUtils.getGoodsid());
-            String[] images = goods.getImages().split(",");
-            messageUtils.setImages(images[0]);
-            messageUtils.setName(goods.getName());
+    public JsonData findAllByUser(Integer userId) {
+        List<Reply> list = replyRepository.findByUserId(userId);
+        List<MessageUtils> messageUtilsList = new ArrayList<>();
+        for (Reply reply : list) {
+            Matter matter = matterService.findMatterById(reply.getMatterId());
+            String[] images = matter.getImagesUrl().split(",");
+
+
+            MessageUtils message = new MessageUtils();
+            message.setCreateTime(reply.getCreateTime());
+            message.setMatterId(reply.getMatterId());
+            message.setUserId(reply.getUserId());
+            message.setImages(images[0]);
+            message.setName(matter.getTitle());
+            messageUtilsList.add(message);
         }
 
         //将留言装进集合
-        List<MessageUtils> commentList = new ArrayList<>();
-        int[] ids = this.replyDao.findGoodsId(userId);
+        /*List<MessageUtils> commentList = new ArrayList<>();
+        int[] ids = this.replyRepository.findGoodsId(userId);
         for (int i = 0; i < ids.length; i++) {
             int id = ids[i];
-            commentList = this.replyDao.findComment(id, userId);
+            commentList = this.replyRepository.findComment(id, userId);
             for (MessageUtils messageUtils : commentList) {
-                MessageUtils goods = this.replyDao.findGoods(messageUtils.getGoodsid());
+                MessageUtils goods = this.replyRepository.findGoods(messageUtils.getMatterId());
                 String[] images = goods.getImages().split(",");
                 messageUtils.setImages(images[0]);
                 messageUtils.setName(goods.getName());
@@ -95,13 +108,13 @@ public class ReplyService {
         }
         if (commentList.size() > 0) {
             list.addAll(commentList);
-        }
-        //将关注装进集合
-        List<MessageUtils> fansList = replyDao.findFans(userId);
+        }*/
+       /* //将关注装进集合
+        List<MessageUtils> fansList = replyRepository.findFans(userId);
         if (fansList.size() > 0){
             list.addAll(fansList);
-        }
-        //将点赞信息装进集合
+        }*/
+        /*//将点赞信息装进集合
         List<MessageUtils> loveMList = new ArrayList<>();
         List<Love> loveList = replyDao.findLove(userId);
         for (Love love : loveList) {
@@ -121,21 +134,21 @@ public class ReplyService {
         }
         if (loveMList.size() > 0){
             list.addAll(loveMList);
-        }
+        }*/
         //返回总数据
-        if (list.size() == 0) {
+        if (messageUtilsList.size() == 0) {
             return JsonData.buildSuccess("无数据");
         }else {
-            Collections.sort(list);
+            Collections.sort(messageUtilsList);
             redisTemplate.delete(String.valueOf(userId));
             redisTemplate.delete("fans-" + userId);
             return JsonData.buildSuccess(list, "");
         }
-    }*/
+    }
 
 
     //树形结构的留言回复数据
-    public List<Reply> getTreeReply(Long id, Long userid) {
+    public List<Reply> getTreeReply(Integer id, Integer userid) {
         List<Reply> list = this.replyRepository.findByCommentId(id);
         for (Reply reply : list) {
             //判断是否对回复点赞

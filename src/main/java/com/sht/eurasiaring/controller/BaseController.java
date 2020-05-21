@@ -10,7 +10,7 @@ public class BaseController {
 
     protected HttpServletRequest request;
     protected HttpServletResponse response;
-    protected Long userId;
+    protected Integer userId;
     protected String nickName;
     protected Claims claims;
 
@@ -24,7 +24,7 @@ public class BaseController {
 
         if(obj != null) {
             this.claims = (Claims) obj;
-            this.userId = (Long)claims.get("id");
+            this.userId = (Integer)claims.get("id");
             this.nickName = (String)claims.get("nickName");
         }
     }

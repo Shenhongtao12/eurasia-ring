@@ -22,6 +22,13 @@ spring:
     multipart:
       max-file-size: 10MB # 限制文件上传的大小
       enabled: true  #是否启用文件上传功能
+  redis:
+    #host: 172.17.240.99
+    host: 47.93.240.205
+    port: 6379
+    database: 0
+    password: sht123
+    timeout: 5000
 WX_DATA:
   appid: wx72280998498b78c9
   secret: e3198aacefab2c8b8684ea8573dc94bd

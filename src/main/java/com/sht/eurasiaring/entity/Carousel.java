@@ -19,7 +19,7 @@ public class Carousel implements Serializable {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     /**
      * 轮播图的标题

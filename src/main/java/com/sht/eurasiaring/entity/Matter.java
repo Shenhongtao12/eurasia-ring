@@ -18,11 +18,12 @@ public class Matter implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
+    private String title;
     private String content;
     private String imagesUrl;
     private String createTime;
-    private Long userId;
+    private Integer userId;
 
     @Transient
     private List<Comment> commentList;

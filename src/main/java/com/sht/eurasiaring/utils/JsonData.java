@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class JsonData implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final Long serialVersionUID = 1L;
     private Integer code;
     private Object data;
     private String msg;

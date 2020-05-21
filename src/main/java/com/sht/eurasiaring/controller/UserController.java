@@ -16,7 +16,7 @@ import java.util.Map;
  **/
 @RestController
 @RequestMapping("ring/user")
-public class UserController {
+public class UserController extends BaseController{
     @Autowired
     private UserService userService;
 
@@ -29,5 +29,10 @@ public class UserController {
     @GetMapping("init")
     public ResponseEntity<JsonData> init(){
         return ResponseEntity.ok(JsonData.buildSuccess(userService.init(), "初始化数据"));
+    }
+
+    @GetMapping()
+    public ResponseEntity<Integer> getMessage(){
+        return ResponseEntity.ok(userService.getMessage(userId));
     }
 }

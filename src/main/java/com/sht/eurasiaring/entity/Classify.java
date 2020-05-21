@@ -18,7 +18,7 @@ public class Classify implements Serializable {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //设置自增策略
-    private Long id;
+    private Integer id;
 
     /**
      * 分类名称

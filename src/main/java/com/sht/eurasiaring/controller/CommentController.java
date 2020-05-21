@@ -14,18 +14,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping({"ring/comment"})
-public class CommentController {
+public class CommentController extends BaseController{
 
     @Autowired
     private CommentService commentService;
 
     @PostMapping()
     public ResponseEntity<JsonData> save(@RequestBody Comment comment){
+        comment.setUserId(userId);
         return ResponseEntity.ok(this.commentService.save(comment));
     }
 
     @DeleteMapping()
-    public ResponseEntity<JsonData> delete(@RequestParam(name = "id") Long id) {
+    public ResponseEntity<JsonData> delete(@RequestParam(name = "id") Integer id) {
         return ResponseEntity.ok(this.commentService.delete(id));
     }
 }

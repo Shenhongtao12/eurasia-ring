@@ -37,7 +37,7 @@ class EurasiaRingApplicationTests {
 
     @Test
     void test1(){
-        Optional<Classify> byId = classifyRepository.findById(1L);
+        Optional<Classify> byId = classifyRepository.findById(1);
         System.out.println(byId);
         System.out.println(byId.get());
         System.out.println(byId.isPresent());

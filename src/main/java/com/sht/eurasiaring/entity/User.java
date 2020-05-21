@@ -22,7 +22,7 @@ public class User implements Serializable {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //设置自增策略
-    private Long id;
+    private Integer id;
 
     /**
      *用户名

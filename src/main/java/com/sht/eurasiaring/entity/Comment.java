@@ -16,12 +16,12 @@ public class Comment implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long commentId;
+	private Integer commentId;
 	private String content;
 	private String createTime;
 	private Integer number;
-	private Long userId;  //留言的发布人id
-	private Long matterId;
+	private Integer userId;  //留言的发布人id
+	private Integer matterId;
 	private Integer leaf;  //null 用来区分留言和回复
 
 	@Transient

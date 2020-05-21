@@ -9,7 +9,7 @@ import java.util.Date;
 @Slf4j
 public class JwtUtils {
 	private static final String SUBJECT = "shtDeal";
-	private static final long EXPIRE = 1000*60*60*24*7; //7天
+	private static final Integer EXPIRE = 1000*60*60*24*7; //7天
 	private static final String APPSECRET = "e61451278486b545f860defcae13c19f";//"MD5", "sht666", "deal", 10
 
 	public static String geneJsonWebToken(User user)

@@ -38,7 +38,7 @@ public class UploadService {
                     log.error("上传失败，文件内容不符合");
                     return JsonData.buildError("上传失败，文件内容不符合");
                 }
-                long size = file.getSize();
+                Long size = file.getSize();
                 if (size >= 10 * 1024 * 1024) {
                     log.error("文件过大：" + size + " 字节");
                     return JsonData.buildError("文件大小不能超过10M");

@@ -30,12 +30,12 @@ public class MatterController extends BaseController{
     }
 
     @DeleteMapping
-    public ResponseEntity<JsonData> delete(@RequestParam(name = "id") Long id) {
+    public ResponseEntity<JsonData> delete(@RequestParam(name = "id") Integer id) {
         return ResponseEntity.status(HttpStatus.OK).body(matterService.delete(id));
     }
 
     @GetMapping("{matterId}")
-    public ResponseEntity<JsonData> findById(@PathVariable(name = "matterId") Long matterId){
+    public ResponseEntity<JsonData> findById(@PathVariable(name = "matterId") Integer matterId){
         Matter result = matterService.findById(matterId, userId);
         if (result == null) {
             return ResponseEntity.ok(JsonData.buildError("不存在的matterId：" + matterId));

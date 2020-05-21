@@ -43,7 +43,7 @@ public class MatterService {
         return JsonData.buildSuccess("更新成功");
     }
 
-    public JsonData delete(Long id) {
+    public JsonData delete(Integer id) {
         matterRepository.deleteById(id);
         return JsonData.buildSuccess("删除成功");
     }
@@ -53,9 +53,17 @@ public class MatterService {
         return new PageResult<>(page.getTotalElements(), page.getTotalPages(), page.getContent());
     }
 
-    public Matter findById(Long matterId, Long userId) {
+    public Matter findById(Integer matterId, Integer userId) {
         Matter matter = matterRepository.findById(matterId).get();
         matter.setCommentList(commentService.findByMatterId(matterId, userId));
         return matter;
+    }
+
+    public Integer findUserIdByMatterId(Integer matterId){
+        return matterRepository.findUserIdById(matterId);
+    }
+
+    public Matter findMatterById(Integer matterId) {
+        return matterRepository.findById(matterId).get();
     }
 }

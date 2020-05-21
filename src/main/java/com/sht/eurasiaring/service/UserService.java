@@ -8,9 +8,11 @@ import com.sht.eurasiaring.entity.User;
 import com.sht.eurasiaring.exception.AllException;
 import com.sht.eurasiaring.utils.DateUtils;
 import com.sht.eurasiaring.utils.HttpClientUtils;
+import com.sht.eurasiaring.utils.JsonData;
 import com.sht.eurasiaring.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -42,6 +44,9 @@ public class UserService {
 
     @Autowired
     private MatterService matterService;
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
 
     public Map<String, Object> login(User user) {
@@ -88,5 +93,14 @@ public class UserService {
         //热门
         map.put("matterList", matterService.init());
         return map;
+    }
+
+    public Integer getMessage(Integer userId) {
+        //获取回复数量
+        String reply = redisTemplate.boundValueOps("eurasia_" + userId).get();
+        if (reply == null){
+            return 0;
+        }
+        return Integer.parseInt(reply);
     }
 }

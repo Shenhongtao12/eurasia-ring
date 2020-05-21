@@ -1,9 +1,9 @@
 package com.sht.eurasiaring.interceptor;
 
-import com.sht.eurasiaring.exception.AllException;
+import com.alibaba.fastjson.JSON;
+import com.sht.eurasiaring.utils.JsonData;
 import com.sht.eurasiaring.utils.JwtUtils;
 import io.jsonwebtoken.Claims;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +12,8 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * 自定义拦截器
@@ -52,7 +54,7 @@ public class JwtInterceptor extends HandlerInterceptorAdapter {
             Claims claims = JwtUtils.checkJWT(token);
             if(claims != null) {
                 //通过claims获取到当前用户的可访问API权限字符串
-                String id = (String) claims.get("id");  //api-user-delete,api-user-update
+                Integer id = (Integer) claims.get("id");  //api-user-delete,api-user-update
                 //通过handler
                 HandlerMethod h = (HandlerMethod) handler;
                 //获取接口上的reqeustmapping注解
@@ -65,10 +67,28 @@ public class JwtInterceptor extends HandlerInterceptorAdapter {
                     request.setAttribute("user_claims",claims);
                     return true;
                 }else {
-                    throw new AllException(-1, "token错误");
+                    sendJsonMessage(response, JsonData.buildError("鉴权失败"));
                 }
             }
         }
-        throw new AllException(-1, "token错误");
+        sendJsonMessage(response, JsonData.buildError("请登录！"));
+        return false;
+    }
+
+    /**
+     * 响应数据给前端
+     * @param response
+     * @param obj
+     */
+    public static void sendJsonMessage(HttpServletResponse response, Object obj) throws IOException {
+        response.setContentType("application/json; charset=utf-8");
+        PrintWriter writer = response.getWriter();
+        writer.print(JSON.toJSON(obj));
+        writer.close();
+        try {
+            response.flushBuffer();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 }
