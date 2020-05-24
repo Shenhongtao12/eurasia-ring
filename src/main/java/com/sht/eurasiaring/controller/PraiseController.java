@@ -1,6 +1,7 @@
 package com.sht.eurasiaring.controller;
 
 import com.sht.eurasiaring.service.PraiseService;
+import com.sht.eurasiaring.utils.JsonData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +23,8 @@ public class PraiseController {
     private PraiseService praiseService;
 
     @PostMapping()
-    public ResponseEntity<String> save(@RequestBody Map map) { // "type":"reply:600:600","state":"1"
+    public ResponseEntity<JsonData> save(@RequestBody Map map) { // "type":"reply:600:600","state":"1"
         praiseService.save(map.get("type"), map.get("state"));
-        return ResponseEntity.status(HttpStatus.OK).body("成功");
+        return ResponseEntity.status(HttpStatus.OK).body(JsonData.buildSuccess("成功"));
     }
 }

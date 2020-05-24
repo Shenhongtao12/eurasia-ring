@@ -39,7 +39,7 @@ public class PraiseService {
         this.redisTemplate.boundHashOps("PraiseHash").put(type, state);
     }
 
-    @Scheduled(cron = "0/30 * * * * *")
+    @Scheduled(cron = "*/8 * * * * ?")
     public void saveSql() {
         Set<Object> key = this.redisTemplate.boundHashOps("PraiseHash").keys();
         List<Object> value = this.redisTemplate.boundHashOps("PraiseHash").values();
