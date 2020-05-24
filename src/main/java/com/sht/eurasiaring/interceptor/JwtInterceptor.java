@@ -45,7 +45,7 @@ public class JwtInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 1.通过request获取请求token信息
-        String authorization = request.getHeader("Authorization");
+        String authorization = request.getHeader("token");//Authorization
         //判断请求头信息是否为空，或者是否已Bearer开头
         if(!StringUtils.isEmpty(authorization) && authorization.startsWith("Bearer")) {
             //获取token数据

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.sht.eurasiaring.entity.Matter;
+import com.sht.eurasiaring.entity.Post;
 import com.sht.eurasiaring.repository.ReplyRepository;
 import com.sht.eurasiaring.entity.Reply;
 import com.sht.eurasiaring.exception.AllException;
@@ -26,7 +26,9 @@ public class ReplyService {
     @Autowired
     private StringRedisTemplate redisTemplate;
     @Autowired
-    private MatterService matterService;
+    private PostService postService;
+    @Autowired
+    private UserService userService;
 
 
     public int deleteByCommentId(Integer comid) {
@@ -80,16 +82,16 @@ public class ReplyService {
         List<Reply> list = replyRepository.findByUserId(userId);
         List<MessageUtils> messageUtilsList = new ArrayList<>();
         for (Reply reply : list) {
-            Matter matter = matterService.findMatterById(reply.getMatterId());
-            String[] images = matter.getImagesUrl().split(",");
+            Post post = postService.findPostById(reply.getPostId());
+            String[] images = post.getImagesUrl().split(",");
 
 
             MessageUtils message = new MessageUtils();
             message.setCreateTime(reply.getCreateTime());
-            message.setMatterId(reply.getMatterId());
+            message.setPostId(reply.getPostId());
             message.setUserId(reply.getUserId());
             message.setImages(images[0]);
-            message.setName(matter.getTitle());
+            message.setName(post.getTitle());
             messageUtilsList.add(message);
         }
 
@@ -100,7 +102,7 @@ public class ReplyService {
             int id = ids[i];
             commentList = this.replyRepository.findComment(id, userId);
             for (MessageUtils messageUtils : commentList) {
-                MessageUtils goods = this.replyRepository.findGoods(messageUtils.getMatterId());
+                MessageUtils goods = this.replyRepository.findGoods(messageUtils.getpostId());
                 String[] images = goods.getImages().split(",");
                 messageUtils.setImages(images[0]);
                 messageUtils.setName(goods.getName());
@@ -151,10 +153,11 @@ public class ReplyService {
     public List<Reply> getTreeReply(Integer id, Integer userid) {
         List<Reply> list = this.replyRepository.findByCommentId(id);
         for (Reply reply : list) {
+            reply.setUser(userService.findUserById(reply.getUserId()));
             //判断是否对回复点赞
 //            reply.setState(this.likeMapper.findLoveBy("reply", reply.getId(), userid));
 //            //设置nickname
-//            reply.setParentname(replyDao.findNickname(reply.getNameid()));
+//            reply.setParentName(replyDao.findNickname(reply.getNameid()));
         }
 
         connectReply(list);

@@ -21,7 +21,7 @@ public class Comment implements Serializable {
 	private String createTime;
 	private Integer number;
 	private Integer userId;  //留言的发布人id
-	private Integer matterId;
+	private Integer postId;
 	private Integer leaf;  //null 用来区分留言和回复
 
 	@Transient

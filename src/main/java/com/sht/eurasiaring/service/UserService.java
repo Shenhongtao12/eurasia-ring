@@ -1,6 +1,7 @@
 package com.sht.eurasiaring.service;
 
 import com.alibaba.fastjson.JSON;
+import com.sht.eurasiaring.entity.Post;
 import com.sht.eurasiaring.repository.UserRepository;
 import com.sht.eurasiaring.entity.Carousel;
 import com.sht.eurasiaring.entity.Classify;
@@ -8,7 +9,6 @@ import com.sht.eurasiaring.entity.User;
 import com.sht.eurasiaring.exception.AllException;
 import com.sht.eurasiaring.utils.DateUtils;
 import com.sht.eurasiaring.utils.HttpClientUtils;
-import com.sht.eurasiaring.utils.JsonData;
 import com.sht.eurasiaring.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,6 +44,8 @@ public class UserService {
 
     @Autowired
     private MatterService matterService;
+    @Autowired
+    private PostService postService;
 
     @Autowired
     private StringRedisTemplate redisTemplate;
@@ -74,6 +76,7 @@ public class UserService {
             user1.setCreateTime(DateUtils.dateToString());
         }
         userRepository.save(user1);
+        user.setId(user1.getId());
         String token = JwtUtils.geneJsonWebToken(user1);
         map.put("token", token);
         map.put("user", user);
@@ -92,6 +95,8 @@ public class UserService {
         map.put("classifyList", classifyList);
         //热门
         map.put("matterList", matterService.init());
+        //帖子
+        map.put("post", postService.init());
         return map;
     }
 
@@ -102,5 +107,9 @@ public class UserService {
             return 0;
         }
         return Integer.parseInt(reply);
+    }
+
+    public User findUserById(Integer id){
+        return userRepository.findById(id).get();
     }
 }

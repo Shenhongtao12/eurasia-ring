@@ -1,10 +1,12 @@
 package com.sht.eurasiaring;
 
+import com.sht.eurasiaring.entity.Matter;
 import com.sht.eurasiaring.repository.ClassifyRepository;
 import com.sht.eurasiaring.entity.Classify;
-import com.sht.eurasiaring.entity.Matter;
+import com.sht.eurasiaring.entity.Post;
 import com.sht.eurasiaring.entity.User;
 import com.sht.eurasiaring.service.MatterService;
+import com.sht.eurasiaring.service.PostService;
 import com.sht.eurasiaring.service.UserService;
 import com.sht.eurasiaring.utils.PageResult;
 import org.junit.jupiter.api.Test;
@@ -24,6 +26,9 @@ class EurasiaRingApplicationTests {
 
     @Autowired
     private MatterService matterService;
+
+    @Autowired
+    private PostService postService;
 
     @Test
     void contextLoads() {
@@ -45,8 +50,8 @@ class EurasiaRingApplicationTests {
 
     @Test
     void test2(){
-        PageResult<Matter> init = matterService.init();
-
+        System.out.println(postService.findUserIdByPostId(4));
     }
+
 
 }

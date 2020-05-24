@@ -6,23 +6,23 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 /**
- * 熱門事件
  * @author Hongtao Shen
- * @date 2020/5/23 - 13:29
+ * @date 2020/5/24 - 19:58
  **/
-@Table(name = "eu_matter")
-@Data
+@Table(name = "eu_praise")
 @Entity
-public class Matter implements Serializable {
+@Data
+public class Praise implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String name;
-    private String matterUrl;
+    private String type;
+    private Integer typeId;
+    private Integer typeUserId;
+    private Integer userId;
     private String createTime;
 
     @Transient
-    private Integer MatterNum;
-
+    private User user;
 }

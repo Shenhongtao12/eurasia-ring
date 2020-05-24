@@ -35,4 +35,9 @@ public class UserController extends BaseController{
     public ResponseEntity<Integer> getMessage(){
         return ResponseEntity.ok(userService.getMessage(userId));
     }
+
+    @GetMapping("{id}")
+    public ResponseEntity<JsonData> findById(@PathVariable Integer id){
+        return ResponseEntity.ok(JsonData.buildSuccess(userService.findUserById(id), ""));
+    }
 }

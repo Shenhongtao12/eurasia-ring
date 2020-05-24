@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * @author Hongtao Shen
- * @date 2020/5/17 - 19:07
+ * @date 2020/5/23 - 13:33
  **/
 @RestController
-@RequestMapping("/ring/matter")
-public class MatterController extends BaseController{
+@RequestMapping("ring/matter")
+public class MatterController {
 
     @Autowired
     private MatterService matterService;
@@ -24,22 +24,9 @@ public class MatterController extends BaseController{
         return ResponseEntity.status(HttpStatus.OK).body(matterService.save(matter));
     }
 
-    //@PutMapping()
-    public ResponseEntity<JsonData> update(@RequestBody Matter matter) {
-        return ResponseEntity.status(HttpStatus.OK).body(matterService.update(matter));
-    }
-
-    @DeleteMapping
-    public ResponseEntity<JsonData> delete(@RequestParam(name = "id") Integer id) {
-        return ResponseEntity.status(HttpStatus.OK).body(matterService.delete(id));
-    }
-
-    @GetMapping("{matterId}")
-    public ResponseEntity<JsonData> findById(@PathVariable(name = "matterId") Integer matterId){
-        Matter result = matterService.findById(matterId, userId);
-        if (result == null) {
-            return ResponseEntity.ok(JsonData.buildError("不存在的matterId：" + matterId));
-        }
-        return ResponseEntity.ok(JsonData.buildSuccess(result, ""));
+    //设置热门话题
+    @PutMapping("hotMatter")
+    public ResponseEntity<JsonData> hotMatter(@RequestParam(name = "hotMatter") String hot){
+        return ResponseEntity.status(HttpStatus.OK).body(matterService.hotMatter(hot));
     }
 }

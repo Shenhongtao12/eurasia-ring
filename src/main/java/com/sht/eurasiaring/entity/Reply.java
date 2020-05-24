@@ -23,7 +23,7 @@ public class Reply implements Serializable {
 	private Integer number;
 	private Integer leaf;   //等于0时就是一个树的末尾
 	private Integer userId;  //发布回复的人id
-	private Integer matterId;  //事件的id
+	private Integer postId;  //帖子的id
 	private Integer commentId;
 	private Integer nameId;  //给谁回复的人id 父id
 	private Integer parentId; // reply的父id

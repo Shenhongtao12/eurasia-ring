@@ -8,7 +8,7 @@ import lombok.Data;
 public class MessageUtils implements Comparable<MessageUtils> {
 	private String images;
 	private String name;
-	private Integer matterId;
+	private Integer postId;
 	private String createTime;
 	private String content;
 	private Integer userId;
