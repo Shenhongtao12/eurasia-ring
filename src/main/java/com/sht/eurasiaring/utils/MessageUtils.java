@@ -11,7 +11,6 @@ public class MessageUtils implements Comparable<MessageUtils> {
 	private Integer postId;
 	private String createTime;
 	private String content;
-	private Integer userId;
 	private User user;
 
 	public int compareTo(MessageUtils o) {

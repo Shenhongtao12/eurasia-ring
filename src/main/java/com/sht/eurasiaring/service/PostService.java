@@ -11,6 +11,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
+
 /**
  * @author Hongtao Shen
  * @date 2020/5/17 - 19:11
@@ -73,4 +75,10 @@ public class PostService {
     public Post findPostById(Integer postId) {
         return postRepository.findById(postId).get();
     }
+
+    //根据userId查找post
+    public List<Post> findByUserId(Integer userId){
+        return postRepository.findByUserId(userId);
+    }
+
 }

@@ -18,13 +18,14 @@ import java.util.Map;
  **/
 @RequestMapping("ring/praise")
 @RestController
-public class PraiseController {
+public class PraiseController extends BaseController {
     @Autowired
     private PraiseService praiseService;
 
     @PostMapping()
-    public ResponseEntity<JsonData> save(@RequestBody Map map) { // "type":"reply:600:600","state":"1"
-        praiseService.save(map.get("type"), map.get("state"));
+    public ResponseEntity<JsonData> save(@RequestBody Map<String, Object> map) { // "type":"reply:600:600","state":"1"
+        String type = map.get("type") + ":"+ userId;
+        praiseService.save(type, map.get("state"));
         return ResponseEntity.status(HttpStatus.OK).body(JsonData.buildSuccess("成功"));
     }
 }

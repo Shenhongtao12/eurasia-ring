@@ -39,6 +39,7 @@ public class PraiseService {
         this.redisTemplate.boundHashOps("PraiseHash").put(type, state);
     }
 
+
     @Scheduled(cron = "*/8 * * * * ?")
     public void saveSql() {
         Set<Object> key = this.redisTemplate.boundHashOps("PraiseHash").keys();
@@ -61,7 +62,7 @@ public class PraiseService {
                         //点赞数量-1
                         updateMessage(num, -1);
                     }
-                } else if (praise != null) {  //点赞，并且数据库无记录的
+                } else if (praise == null) {  //点赞，并且数据库无记录的
                     Praise praiseInfo = new Praise();
                     praiseInfo.setType(num[0].trim());
                     praiseInfo.setTypeId(Integer.valueOf(num[1].trim()));
@@ -71,15 +72,15 @@ public class PraiseService {
                     if ("comment".equals(num[0].trim())) {
                         Comment comment = commentRepository.findById(Integer.valueOf(num[1])).get();
                         id = comment.getUserId();
-                        praise.setTypeUserId(id);
+                        praiseInfo.setTypeUserId(id);
                     } else {
                         Reply reply = replyRepository.findById(Integer.valueOf(num[1])).get();
                         id = reply.getUserId();
-                        praise.setTypeUserId(id);
+                        praiseInfo.setTypeUserId(id);
                     }
-                    praiseRepository.save(praise);
+                    praiseRepository.save(praiseInfo);
                     //给被点赞的新消息数+1
-                    if (id != praise.getUserId()) {
+                    if (id != praiseInfo.getUserId()) {
                         redisTemplate.boundValueOps("eurasia_" + id).increment(1);
                     }
                     //点赞数量+1
@@ -99,6 +100,11 @@ public class PraiseService {
             comment.setNumber(comment.getNumber() + num);
             commentRepository.save(comment);
         }
+    }
+
+    //查找点赞信息
+    public List<Praise> findByTypeUserId(Integer userId){
+        return praiseRepository.findByTypeUserId(userId);
     }
 
 }

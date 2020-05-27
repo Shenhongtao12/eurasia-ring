@@ -27,8 +27,6 @@ public class Reply implements Serializable {
 	private Integer commentId;
 	private Integer nameId;  //给谁回复的人id 父id
 	private Integer parentId; // reply的父id
-
-	@Transient
 	private String parentName;//父name
 	@Transient
 	private Object state;  //判断点赞

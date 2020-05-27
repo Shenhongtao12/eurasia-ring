@@ -4,7 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.sht.eurasiaring.entity.Comment;
 import com.sht.eurasiaring.entity.Post;
+import com.sht.eurasiaring.entity.Praise;
+import com.sht.eurasiaring.repository.CommentRepository;
+import com.sht.eurasiaring.repository.PraiseRepository;
 import com.sht.eurasiaring.repository.ReplyRepository;
 import com.sht.eurasiaring.entity.Reply;
 import com.sht.eurasiaring.exception.AllException;
@@ -12,9 +16,12 @@ import com.sht.eurasiaring.utils.DateUtils;
 import com.sht.eurasiaring.utils.JsonData;
 import com.sht.eurasiaring.utils.MessageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.criteria.*;
 
 
 @Service
@@ -29,6 +36,10 @@ public class ReplyService {
     private PostService postService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private PraiseRepository praiseRepository;
+    @Autowired
+    private CommentService commentService;
 
 
     public int deleteByCommentId(Integer comid) {
@@ -79,64 +90,79 @@ public class ReplyService {
 
     //查看与我相关
     public JsonData findAllByUser(Integer userId) {
-        List<Reply> list = replyRepository.findByUserId(userId);
         List<MessageUtils> messageUtilsList = new ArrayList<>();
+        //自定义查询条件
+        Specification<Reply> spec = new Specification<Reply>() {
+            @Override
+            public Predicate toPredicate(Root<Reply> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> list = new ArrayList<>();
+                //根据属性名获取查询对象的属性
+                //Path<Reply> path = root.get("nameId");
+                //相当于 where receiverName = "Veggie", CriteriaBuilder接口中还有很多查询条件，建议看源码
+                //Predicate equal = criteriaBuilder.equal(path, userId);
+                list.add(criteriaBuilder.equal(root.get("nameId"), userId));
+                list.add(criteriaBuilder.notEqual(root.get("userId"), userId));
+                return criteriaBuilder.and(list.toArray(new Predicate[list.size()]));
+            }
+        };
+        List<Reply> list =replyRepository.findAll(spec);
         for (Reply reply : list) {
             Post post = postService.findPostById(reply.getPostId());
             String[] images = post.getImagesUrl().split(",");
 
-
             MessageUtils message = new MessageUtils();
             message.setCreateTime(reply.getCreateTime());
+            message.setContent(reply.getContent());
             message.setPostId(reply.getPostId());
-            message.setUserId(reply.getUserId());
             message.setImages(images[0]);
             message.setName(post.getTitle());
+            message.setUser(userService.findUserById(reply.getUserId()));
             messageUtilsList.add(message);
         }
 
+
         //将留言装进集合
-        /*List<MessageUtils> commentList = new ArrayList<>();
-        int[] ids = this.replyRepository.findGoodsId(userId);
-        for (int i = 0; i < ids.length; i++) {
-            int id = ids[i];
-            commentList = this.replyRepository.findComment(id, userId);
-            for (MessageUtils messageUtils : commentList) {
-                MessageUtils goods = this.replyRepository.findGoods(messageUtils.getpostId());
-                String[] images = goods.getImages().split(",");
-                messageUtils.setImages(images[0]);
-                messageUtils.setName(goods.getName());
+        List<Post> postList = postService.findByUserId(userId);
+        List<Comment> commentList;
+        for (Post post : postList) {
+            commentList = commentService.findByPostIdUserId(post.getId(), userId);
+            for (Comment comment : commentList) {
+                MessageUtils message = new MessageUtils();
+                message.setName(post.getTitle());
+                message.setImages(post.getImagesUrl().split(",")[0]);
+                message.setContent(comment.getContent());
+                message.setCreateTime(comment.getCreateTime());
+                message.setPostId(comment.getPostId());
+                message.setUser(userService.findUserById(comment.getUserId()));
+                messageUtilsList.add(message);
             }
         }
-        if (commentList.size() > 0) {
-            list.addAll(commentList);
-        }*/
+
+
        /* //将关注装进集合
         List<MessageUtils> fansList = replyRepository.findFans(userId);
         if (fansList.size() > 0){
             list.addAll(fansList);
         }*/
-        /*//将点赞信息装进集合
-        List<MessageUtils> loveMList = new ArrayList<>();
-        List<Love> loveList = replyDao.findLove(userId);
-        for (Love love : loveList) {
-            MessageUtils type = new MessageUtils();
-            if ("comment".equals(love.getType())){
-                type = replyDao.findCommentContent(love.getTypeid());
-            }else if("reply".equals(love.getType())){
-                type = replyDao.findReplyContent(love.getTypeid());
+        //将点赞信息装进集合
+        List<Praise> praiseList = praiseRepository.findByTypeUserId(userId);
+        for (Praise praise : praiseList) {
+            MessageUtils message = new MessageUtils();
+            message.setCreateTime(praise.getCreateTime());
+            message.setUser(userService.findUserById(praise.getUserId()));
+            if ("reply".equals(praise.getType())){
+                Reply reply = replyRepository.findById(praise.getTypeId()).get();
+                Post post = postService.findPostById(reply.getPostId());
+                message.setName(post.getTitle());
+                message.setImages(post.getImagesUrl().split(",")[0]);
+            }else if("comment".equals(praise.getType())){
+                Comment comment = commentService.findById(praise.getTypeId());
+                Post post = postService.findPostById(comment.getPostId());
+                message.setName(post.getTitle());
+                message.setImages(post.getImagesUrl().split(",")[0]);
             }
-            type.setUserid(love.getUserid());
-            type.setUser(love.getUser());
-            type.setCreatetime(love.getCreatetime());
-            MessageUtils goods = this.replyDao.findGoods(type.getGoodsid());
-            String[] images = goods.getImages().split(",");
-            type.setImages(images[0]);
-            loveMList.add(type);
+            messageUtilsList.add(message);
         }
-        if (loveMList.size() > 0){
-            list.addAll(loveMList);
-        }*/
         //返回总数据
         if (messageUtilsList.size() == 0) {
             return JsonData.buildSuccess("无数据");
@@ -144,20 +170,18 @@ public class ReplyService {
             Collections.sort(messageUtilsList);
             redisTemplate.delete(String.valueOf(userId));
             redisTemplate.delete("fans-" + userId);
-            return JsonData.buildSuccess(list, "");
+            return JsonData.buildSuccess(messageUtilsList, "");
         }
     }
 
 
     //树形结构的留言回复数据
-    public List<Reply> getTreeReply(Integer id, Integer userid) {
+    public List<Reply> getTreeReply(Integer id, Integer userId) {
         List<Reply> list = this.replyRepository.findByCommentId(id);
         for (Reply reply : list) {
             reply.setUser(userService.findUserById(reply.getUserId()));
             //判断是否对回复点赞
-//            reply.setState(this.likeMapper.findLoveBy("reply", reply.getId(), userid));
-//            //设置nickname
-//            reply.setParentName(replyDao.findNickname(reply.getNameid()));
+            reply.setState(praiseRepository.findPraiseByTypeAndTypeIdAndUserId("reply", reply.getId(), userId) == null ? "false" : "true");
         }
 
         connectReply(list);

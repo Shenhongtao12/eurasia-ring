@@ -27,7 +27,8 @@ public class ReplyController extends BaseController{
 
 
     @GetMapping({"findAllByUser"})
-    public ResponseEntity<JsonData> findAllByUser(@RequestParam(name = "nameId") Integer nameId) {
-        return ResponseEntity.ok(this.replyService.findAllByUser(nameId));
+    public ResponseEntity<JsonData> findAllByUser(@RequestParam(name = "id", required = false) Integer id) {
+
+        return ResponseEntity.ok(this.replyService.findAllByUser(id == null ? userId : id));
     }
 }

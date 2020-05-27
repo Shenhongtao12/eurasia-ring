@@ -2,14 +2,22 @@ package com.sht.eurasiaring.service;
 
 import com.sht.eurasiaring.entity.Comment;
 import com.sht.eurasiaring.entity.Post;
+import com.sht.eurasiaring.entity.Reply;
 import com.sht.eurasiaring.repository.CommentRepository;
+import com.sht.eurasiaring.repository.PraiseRepository;
 import com.sht.eurasiaring.utils.DateUtils;
 import com.sht.eurasiaring.utils.JsonData;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -27,6 +35,8 @@ public class CommentService {
     private StringRedisTemplate redisTemplate;
     @Autowired
     private UserService userService;
+    @Autowired
+    private PraiseRepository praiseRepository;
 
     //添加留言
     public JsonData save(Comment comment) {
@@ -48,11 +58,32 @@ public class CommentService {
 
     //根据postId查询留言回复
     public List<Comment> findBypostId(Integer postId, Integer userId){
-        List<Comment> commentList = commentRepository.findBypostId(postId);
+        List<Comment> commentList = commentRepository.findByPostId(postId);
         for (Comment comment : commentList) {
             comment.setUser(userService.findUserById(comment.getUserId()));
             comment.setReplyList(replyService.getTreeReply(comment.getCommentId(), userId));
+            comment.setState(praiseRepository.findPraiseByTypeAndTypeIdAndUserId("comment", comment.getCommentId(), userId) == null ? "false" : "true");
         }
         return commentList;
+    }
+
+    //回复留言
+    public List<Comment> findByPostIdUserId(Integer postId, Integer userId){
+        Specification<Comment> spec = new Specification<Comment>() {
+            @Override
+            public Predicate toPredicate(Root<Comment> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> list = new ArrayList<>();
+                //根据属性名获取查询对象的属性
+                list.add(criteriaBuilder.equal(root.get("postId"), postId));
+                list.add(criteriaBuilder.notEqual(root.get("userId"), userId));
+                return criteriaBuilder.and(list.toArray(new Predicate[list.size()]));
+            }
+        };
+        return commentRepository.findAll(spec);
+    }
+
+    //findById
+    public Comment findById(Integer id){
+        return commentRepository.findById(id).get();
     }
 }
