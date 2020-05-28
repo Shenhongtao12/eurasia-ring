@@ -7,7 +7,6 @@ import java.util.List;
 import com.sht.eurasiaring.entity.Comment;
 import com.sht.eurasiaring.entity.Post;
 import com.sht.eurasiaring.entity.Praise;
-import com.sht.eurasiaring.repository.CommentRepository;
 import com.sht.eurasiaring.repository.PraiseRepository;
 import com.sht.eurasiaring.repository.ReplyRepository;
 import com.sht.eurasiaring.entity.Reply;
@@ -67,9 +66,9 @@ public class ReplyService {
             reply1.setLeaf(1);
             replyRepository.save(reply1);
         }
+        reply.setNumber(0);
         reply.setParentId(reply.getLeaf());
         reply.setLeaf(0);
-        System.out.println("回复留言: " + reply);
         replyRepository.save(reply);
         /*Optional<Reply> originalReply = replyRepository.findById(reply.getId());
         if (originalReply.isPresent()) {

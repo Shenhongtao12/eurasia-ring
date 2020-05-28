@@ -21,6 +21,7 @@ public class PostController extends BaseController{
 
     @PostMapping()
     public ResponseEntity<JsonData> save(@RequestBody Post post){
+        post.setUserId(userId);
         return ResponseEntity.status(HttpStatus.OK).body(postService.save(post));
     }
 
@@ -43,20 +44,14 @@ public class PostController extends BaseController{
         return ResponseEntity.ok(JsonData.buildSuccess(result, ""));
     }
 
-    @GetMapping("findByClassify/{classifyId}")
+    @GetMapping("findByClassifyOrMatter")
     public ResponseEntity<JsonData> findByClassify(
-            @PathVariable(name = "classifyId") Integer classifyId,
+            @RequestParam(name = "classifyId", required = false) Integer classifyId,
+            @RequestParam(name = "matterId", required = false) Integer matterId,
             @RequestParam(name = "page", defaultValue = "1") Integer page,
             @RequestParam(name = "rows", defaultValue = "10") Integer rows
             ) {
-        return ResponseEntity.ok(JsonData.buildSuccess(postService.findByClassify(classifyId, page, rows), ""));
-    }
-
-    @GetMapping("findByMatter/{matterId}")
-    public ResponseEntity<JsonData> findByClassify(
-            @PathVariable(name = "matterId") Integer matterId
-    ) {
-        return ResponseEntity.ok(JsonData.buildSuccess(postService.findByMatterId(matterId, 1, 10), ""));
+        return ResponseEntity.ok(JsonData.buildSuccess(postService.findByClassify(classifyId,matterId, page, rows), ""));
     }
 
 

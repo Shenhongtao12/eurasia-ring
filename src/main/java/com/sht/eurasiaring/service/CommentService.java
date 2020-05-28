@@ -41,6 +41,7 @@ public class CommentService {
     //添加留言
     public JsonData save(Comment comment) {
         comment.setCreateTime(DateUtils.dateToString());
+        comment.setNumber(0);
         commentRepository.save(comment);
         Post post = postService.findUserIdByPostId(comment.getPostId());
         if (!comment.getUserId().equals(post.getUserId())) {
@@ -65,6 +66,14 @@ public class CommentService {
             comment.setState(praiseRepository.findPraiseByTypeAndTypeIdAndUserId("comment", comment.getCommentId(), userId) == null ? "false" : "true");
         }
         return commentList;
+    }
+
+    //根据commentId 查询一个留言下的回复
+    public Comment findOneComment(Integer id, Integer userId){
+        Comment comment = findById(id);
+        comment.setReplyList(replyService.getTreeReply(comment.getCommentId(), userId));
+        comment.setState(praiseRepository.findPraiseByTypeAndTypeIdAndUserId("comment", comment.getCommentId(), userId) == null ? "false" : "true");
+        return comment;
     }
 
     //回复留言

@@ -89,7 +89,7 @@ public class PostService {
         return postRepository.findByUserId(userId);
     }
 
-    public PageResult<Post> findByClassify(Integer classifyId, Integer page, Integer rows) {
+    public PageResult<Post> findByClassify(Integer classifyId, Integer matterId, Integer page, Integer rows) {
         //自定义查询条件
         Specification<Post> spec = new Specification<Post>() {
             @Override
@@ -99,24 +99,11 @@ public class PostService {
                 //Path<Reply> path = root.get("nameId");
                 //相当于 where receiverName = "Veggie", CriteriaBuilder接口中还有很多查询条件，建议看源码
                 //Predicate equal = criteriaBuilder.equal(path, userId);
-                list.add(criteriaBuilder.equal(root.get("classifyId"), classifyId));
-                return criteriaBuilder.and(list.toArray(new Predicate[list.size()]));
-            }
-        };
-        Page<Post> postPage = postRepository.findAll(spec, PageRequest.of(page, rows));
-        return new PageResult<>(postPage.getTotalElements(), postPage.getTotalPages(), postPage.getContent());
-    }
-    public PageResult<Post> findByMatterId(Integer matterId, Integer page, Integer rows) {
-        //自定义查询条件
-        Specification<Post> spec = new Specification<Post>() {
-            @Override
-            public Predicate toPredicate(Root<Post> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-                List<Predicate> list = new ArrayList<>();
-                //根据属性名获取查询对象的属性
-                //Path<Reply> path = root.get("nameId");
-                //相当于 where receiverName = "Veggie", CriteriaBuilder接口中还有很多查询条件，建议看源码
-                //Predicate equal = criteriaBuilder.equal(path, userId);
-                list.add(criteriaBuilder.equal(root.get("matterId"), matterId));
+                if(matterId == null){
+                    list.add(criteriaBuilder.equal(root.get("classifyId"), classifyId));
+                }else {
+                    list.add(criteriaBuilder.equal(root.get("matterId"), matterId));
+                }
                 return criteriaBuilder.and(list.toArray(new Predicate[list.size()]));
             }
         };
