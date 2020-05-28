@@ -42,4 +42,22 @@ public class PostController extends BaseController{
         }
         return ResponseEntity.ok(JsonData.buildSuccess(result, ""));
     }
+
+    @GetMapping("findByClassify/{classifyId}")
+    public ResponseEntity<JsonData> findByClassify(
+            @PathVariable(name = "classifyId") Integer classifyId,
+            @RequestParam(name = "page", defaultValue = "1") Integer page,
+            @RequestParam(name = "rows", defaultValue = "10") Integer rows
+            ) {
+        return ResponseEntity.ok(JsonData.buildSuccess(postService.findByClassify(classifyId, page, rows), ""));
+    }
+
+    @GetMapping("findByMatter/{matterId}")
+    public ResponseEntity<JsonData> findByClassify(
+            @PathVariable(name = "matterId") Integer matterId
+    ) {
+        return ResponseEntity.ok(JsonData.buildSuccess(postService.findByMatterId(matterId, 1, 10), ""));
+    }
+
+
 }
