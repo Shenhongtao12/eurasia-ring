@@ -8,6 +8,9 @@ import com.sht.eurasiaring.repository.PraiseRepository;
 import com.sht.eurasiaring.utils.DateUtils;
 import com.sht.eurasiaring.utils.JsonData;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -58,8 +61,17 @@ public class CommentService {
     }
 
     //根据postId查询留言回复
-    public List<Comment> findBypostId(Integer postId, Integer userId){
-        List<Comment> commentList = commentRepository.findByPostId(postId);
+    public List<Comment> findByPostId(Integer postId, Integer userId, String sortName){
+        Specification<Comment> spec = new Specification<Comment>() {
+            @Override
+            public Predicate toPredicate(Root<Comment> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> list = new ArrayList<>();
+                //根据属性名获取查询对象的属性
+                list.add(criteriaBuilder.equal(root.get("postId"), postId));
+                return criteriaBuilder.and(list.toArray(new Predicate[list.size()]));
+            }
+        };
+        List<Comment> commentList = commentRepository.findAll(spec, Sort.by(Sort.Direction.DESC, sortName));
         for (Comment comment : commentList) {
             comment.setUser(userService.findUserById(comment.getUserId()));
             comment.setReplyList(replyService.getTreeReply(comment.getCommentId(), userId));
@@ -76,7 +88,7 @@ public class CommentService {
         return comment;
     }
 
-    //回复留言
+    //查看与我相关，回复留言
     public List<Comment> findByPostIdUserId(Integer postId, Integer userId){
         Specification<Comment> spec = new Specification<Comment>() {
             @Override

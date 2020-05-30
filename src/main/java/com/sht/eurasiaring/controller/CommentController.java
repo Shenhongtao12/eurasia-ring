@@ -29,4 +29,9 @@ public class CommentController extends BaseController{
     public ResponseEntity<JsonData> findOneComment(@RequestParam(name = "id") Integer id){
         return ResponseEntity.ok(JsonData.buildSuccess(commentService.findOneComment(id, userId), ""));
     }
+
+    @GetMapping("findBySort")
+    public ResponseEntity<JsonData> findBySort(@RequestParam(name = "postId") Integer postId){
+        return ResponseEntity.ok(JsonData.buildSuccess(commentService.findByPostId(postId, userId, "number"),""));
+    }
 }

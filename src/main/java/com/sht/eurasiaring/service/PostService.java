@@ -1,12 +1,10 @@
 package com.sht.eurasiaring.service;
 
-import com.sht.eurasiaring.entity.Reply;
 import com.sht.eurasiaring.repository.PostRepository;
 import com.sht.eurasiaring.entity.Post;
 import com.sht.eurasiaring.utils.DateUtils;
 import com.sht.eurasiaring.utils.JsonData;
 import com.sht.eurasiaring.utils.PageResult;
-import javafx.geometry.Pos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -71,7 +69,7 @@ public class PostService {
 
     public Post findById(Integer postId, Integer userId) {
         Post post = postRepository.findById(postId).get();
-        post.setCommentList(commentService.findBypostId(postId, userId));
+        post.setCommentList(commentService.findByPostId(postId, userId, "createTime"));
         post.setUser(userService.findUserById(post.getUserId()));
         return post;
     }
@@ -90,7 +88,7 @@ public class PostService {
     }
 
     public PageResult<Post> findByClassify(Integer classifyId, Integer matterId, Integer page, Integer rows) {
-        //自定义查询条件
+        //自定义查询条件  匿名内部类
         Specification<Post> spec = new Specification<Post>() {
             @Override
             public Predicate toPredicate(Root<Post> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {

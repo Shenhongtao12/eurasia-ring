@@ -21,6 +21,7 @@ public class Post implements Serializable {
     private Integer id;
     private String title;
     private String content;
+    @Column(name = "images_url")
     private String imagesUrl;
     private String createTime;
     private Integer userId;

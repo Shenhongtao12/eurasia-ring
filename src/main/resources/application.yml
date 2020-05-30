@@ -29,6 +29,10 @@ spring:
     database: 0
     password: sht123
     timeout: 5000
+  jpa:
+    show-sql: true
+#    hibernate:
+#      ddl-auto: update
 WX_DATA:
   appid: wx72280998498b78c9
   secret: e3198aacefab2c8b8684ea8573dc94bd
