@@ -13,5 +13,7 @@ public interface ReplyRepository extends JpaRepository<Reply, Integer>, JpaSpeci
 
     Integer deleteByCommentId(Integer id);
 
+    Integer countByParentId(Integer id);
+
 
 }

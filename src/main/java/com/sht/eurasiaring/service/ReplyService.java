@@ -81,7 +81,20 @@ public class ReplyService {
         return JsonData.buildSuccess("回复成功");
     }
 
+    public Reply findById(Integer id){
+        return replyRepository.findById(id).get();
+    }
+
     public JsonData delete(Integer id) {
+        Reply reply = findById(id);
+        if (reply.getParentId() != 0){
+            Integer num = replyRepository.countByParentId(reply.getParentId());
+            if (num <= 1){
+                Reply byId = findById(reply.getParentId());
+                byId.setLeaf(0);
+                replyRepository.save(byId);
+            }
+        }
         this.replyRepository.deleteById(id);
         return JsonData.buildSuccess("成功");
     }
