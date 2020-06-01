@@ -27,7 +27,21 @@ public class Post implements Serializable {
     private Integer userId;
     private Integer matterId;
     private Integer classifyId;
-
+    /**
+     * 点赞数量
+     */
+    @Column(name = "number")
+    private Integer number;
+    /**
+     * 留言的数量
+     */
+    @Transient
+    private Integer commentNum;
+    /**
+     * 判断是否点赞
+     */
+    @Transient
+    private String status;
     @Transient
     private User user;
     @Transient

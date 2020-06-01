@@ -48,8 +48,8 @@ public class PostController extends BaseController{
     public ResponseEntity<JsonData> findByClassify(
             @RequestParam(name = "classifyId", required = false) Integer classifyId,
             @RequestParam(name = "matterId", required = false) Integer matterId,
-            @RequestParam(name = "page", defaultValue = "1") Integer page,
-            @RequestParam(name = "rows", defaultValue = "10") Integer rows
+            @RequestParam(name = "page", defaultValue = "0") Integer page,
+            @RequestParam(name = "rows", defaultValue = "30") Integer rows
             ) {
         return ResponseEntity.ok(JsonData.buildSuccess(postService.findByClassify(classifyId,matterId, page, rows), ""));
     }

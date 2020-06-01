@@ -172,6 +172,10 @@ public class ReplyService {
                 Post post = postService.findPostById(comment.getPostId());
                 message.setName(post.getTitle());
                 message.setImages(post.getImagesUrl().split(",")[0]);
+            }else {
+                Post post = postService.findPostById(praise.getTypeId());
+                message.setName(post.getTitle());
+                message.setImages(post.getImagesUrl().split(",")[0]);
             }
             messageUtilsList.add(message);
         }

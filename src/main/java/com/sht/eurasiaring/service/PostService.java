@@ -1,7 +1,9 @@
 package com.sht.eurasiaring.service;
 
+import com.sht.eurasiaring.entity.Comment;
 import com.sht.eurasiaring.repository.PostRepository;
 import com.sht.eurasiaring.entity.Post;
+import com.sht.eurasiaring.repository.PraiseRepository;
 import com.sht.eurasiaring.utils.DateUtils;
 import com.sht.eurasiaring.utils.JsonData;
 import com.sht.eurasiaring.utils.PageResult;
@@ -33,6 +35,8 @@ public class PostService {
     private CommentService commentService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private PraiseRepository praiseRepository;
 
     public PageResult<Post> init(){
         Page<Post> page = postRepository.findAll(PageRequest.of(0, 20));
@@ -47,6 +51,7 @@ public class PostService {
         if (StringUtils.isEmpty(post.getUserId())){
             return JsonData.buildError("数据错误，未关联用户");
         }
+        post.setNumber(0);
         post.setCreateTime(DateUtils.dateToString());
         postRepository.save(post);
         return JsonData.buildSuccess("成功");
@@ -69,8 +74,11 @@ public class PostService {
 
     public Post findById(Integer postId, Integer userId) {
         Post post = postRepository.findById(postId).get();
-        post.setCommentList(commentService.findByPostId(postId, userId, "createTime"));
+        List<Comment> commentList = commentService.findByPostId(postId, userId, "createTime");
+        post.setCommentList(commentList);
         post.setUser(userService.findUserById(post.getUserId()));
+        post.setCommentNum(commentList.size());
+        post.setStatus(praiseRepository.findPraiseByTypeAndTypeIdAndUserId("post",post.getId(), userId) == null ? "false" : "true");
         return post;
     }
 
@@ -106,6 +114,9 @@ public class PostService {
             }
         };
         Page<Post> postPage = postRepository.findAll(spec, PageRequest.of(page, rows));
+        for (Post post : postPage) {
+            post.setUser(userService.findUserById(post.getUserId()));
+        }
         return new PageResult<>(postPage.getTotalElements(), postPage.getTotalPages(), postPage.getContent());
     }
 }

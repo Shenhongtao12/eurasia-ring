@@ -1,9 +1,11 @@
 package com.sht.eurasiaring.service;
 
 import com.sht.eurasiaring.entity.Comment;
+import com.sht.eurasiaring.entity.Post;
 import com.sht.eurasiaring.entity.Praise;
 import com.sht.eurasiaring.entity.Reply;
 import com.sht.eurasiaring.repository.CommentRepository;
+import com.sht.eurasiaring.repository.PostRepository;
 import com.sht.eurasiaring.repository.PraiseRepository;
 import com.sht.eurasiaring.repository.ReplyRepository;
 import com.sht.eurasiaring.utils.DateUtils;
@@ -30,12 +32,15 @@ public class PraiseService {
     private CommentRepository commentRepository;
     @Autowired
     private ReplyRepository replyRepository;
+    @Autowired
+    private PostRepository postRepository;
 
     /**
      * @param type  "reply:600:600"  留言或者回复:留言的id:用户id
      * @param state "1"点赞 "0"取消点赞
      */
     public void save(Object type, Object state) {
+        System.out.println("11111 " + type +" --- " + state);
         this.redisTemplate.boundHashOps("PraiseHash").put(type, state);
     }
 
@@ -63,21 +68,25 @@ public class PraiseService {
                         updateMessage(num, -1);
                     }
                 } else if (praise == null) {  //点赞，并且数据库无记录的
+                    System.out.println("------进入-----");
                     Praise praiseInfo = new Praise();
                     praiseInfo.setType(num[0].trim());
                     praiseInfo.setTypeId(Integer.valueOf(num[1].trim()));
                     praiseInfo.setUserId(Integer.valueOf(num[2].trim()));
                     praiseInfo.setCreateTime(DateUtils.dateToString());
+                    System.out.println("2222222 " + praiseInfo);
                     int id;
                     if ("comment".equals(num[0].trim())) {
                         Comment comment = commentRepository.findById(Integer.valueOf(num[1])).get();
                         id = comment.getUserId();
-                        praiseInfo.setTypeUserId(id);
-                    } else {
+                    } else if ("reply".equals(num[0].trim())) {
                         Reply reply = replyRepository.findById(Integer.valueOf(num[1])).get();
                         id = reply.getUserId();
-                        praiseInfo.setTypeUserId(id);
+                    }else {
+                        Post post = postRepository.findById(Integer.valueOf(num[1])).get();
+                        id = post.getId();
                     }
+                    praiseInfo.setTypeUserId(id);
                     praiseRepository.save(praiseInfo);
                     //给被点赞的新消息数+1
                     if (id != praiseInfo.getUserId()) {
@@ -95,10 +104,14 @@ public class PraiseService {
             Reply reply = replyRepository.findById(Integer.valueOf(type[1])).get();
             reply.setNumber(reply.getNumber() + num);
             replyRepository.save(reply);
-        } else {
+        } else if ("comment".equals(type[0].trim())){
             Comment comment = commentRepository.findById(Integer.valueOf(type[1])).get();
             comment.setNumber(comment.getNumber() + num);
             commentRepository.save(comment);
+        }else {
+            Post post = postRepository.findById(Integer.valueOf(type[1])).get();
+            post.setNumber(post.getNumber() + num);
+            postRepository.save(post);
         }
     }
 
