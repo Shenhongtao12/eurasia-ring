@@ -23,4 +23,17 @@ public class test1 {
         user.setSession_key("aaaaaaaaaa");
         System.out.println(JwtUtils.geneJsonWebToken(user));
     }
+
+    @Test
+    void array(){
+        String[] strings = new String[4];
+        strings[0] = "111";
+        strings[1] = "222";
+        strings[2] = "333";
+        String a = "";
+        for (String string : strings) {
+            a += string;
+        }
+        System.out.println(a);
+    }
 }

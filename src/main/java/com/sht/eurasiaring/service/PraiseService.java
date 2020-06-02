@@ -40,7 +40,6 @@ public class PraiseService {
      * @param state "1"点赞 "0"取消点赞
      */
     public void save(Object type, Object state) {
-        System.out.println("11111 " + type +" --- " + state);
         this.redisTemplate.boundHashOps("PraiseHash").put(type, state);
     }
 
@@ -68,13 +67,11 @@ public class PraiseService {
                         updateMessage(num, -1);
                     }
                 } else if (praise == null) {  //点赞，并且数据库无记录的
-                    System.out.println("------进入-----");
                     Praise praiseInfo = new Praise();
                     praiseInfo.setType(num[0].trim());
                     praiseInfo.setTypeId(Integer.valueOf(num[1].trim()));
                     praiseInfo.setUserId(Integer.valueOf(num[2].trim()));
                     praiseInfo.setCreateTime(DateUtils.dateToString());
-                    System.out.println("2222222 " + praiseInfo);
                     int id;
                     if ("comment".equals(num[0].trim())) {
                         Comment comment = commentRepository.findById(Integer.valueOf(num[1])).get();
