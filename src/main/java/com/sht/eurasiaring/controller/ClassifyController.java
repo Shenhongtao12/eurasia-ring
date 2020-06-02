@@ -34,4 +34,8 @@ public class ClassifyController {
     public ResponseEntity<JsonData> update(@RequestBody Classify classify) {
         return ResponseEntity.status(HttpStatus.SC_OK).body(classifyService.update(classify));
     }
+    @GetMapping()
+    public ResponseEntity<JsonData> findAll(){
+        return ResponseEntity.ok(JsonData.buildSuccess(classifyService.findAll(), ""));
+    }
 }
