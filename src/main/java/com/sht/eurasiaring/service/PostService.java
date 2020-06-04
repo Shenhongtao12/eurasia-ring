@@ -40,6 +40,10 @@ public class PostService {
 
     public PageResult<Post> init(){
         Page<Post> page = postRepository.findAll(PageRequest.of(0, 20));
+        for (Post post : page) {
+            String[] split = post.getImagesUrl().split(",");
+            post.setImagesUrl(split[0]);
+        }
         return new PageResult<>(page.getTotalElements(), page.getTotalPages(), page.getContent());
     }
 
@@ -52,9 +56,16 @@ public class PostService {
             return JsonData.buildError("数据错误，未关联用户");
         }
         post.setNumber(0);
+        post.setViews(0);
         post.setCreateTime(DateUtils.dateToString());
         postRepository.save(post);
         return JsonData.buildSuccess("成功");
+    }
+    //更新浏览量
+    public void updateViews(Integer postId){
+        Post post = postRepository.findById(postId).get();
+        post.setViews(post.getViews() + 1);
+        postRepository.save(post);
     }
 
     //暂时不允许更新
@@ -95,7 +106,7 @@ public class PostService {
         return postRepository.findByUserId(userId);
     }
 
-    public PageResult<Post> findByClassify(Integer classifyId, Integer matterId, Integer page, Integer rows) {
+    public PageResult<Post> findByClassify(Integer classifyId, Integer matterId,String searchName, Integer page, Integer rows) {
         //自定义查询条件  匿名内部类
         Specification<Post> spec = new Specification<Post>() {
             @Override
@@ -105,10 +116,14 @@ public class PostService {
                 //Path<Reply> path = root.get("nameId");
                 //相当于 where receiverName = "Veggie", CriteriaBuilder接口中还有很多查询条件，建议看源码
                 //Predicate equal = criteriaBuilder.equal(path, userId);
-                if(matterId == null){
-                    list.add(criteriaBuilder.equal(root.get("classifyId"), classifyId));
-                }else {
+                if(matterId != null){
                     list.add(criteriaBuilder.equal(root.get("matterId"), matterId));
+                }
+                if(classifyId != null){
+                    list.add(criteriaBuilder.equal(root.get("classifyId"), classifyId));
+                }
+                if (!StringUtils.isEmpty(searchName)){
+                    list.add(criteriaBuilder.like(root.get("title"), "%" + searchName + "%"));
                 }
                 return criteriaBuilder.and(list.toArray(new Predicate[list.size()]));
             }
@@ -116,6 +131,7 @@ public class PostService {
         Page<Post> postPage = postRepository.findAll(spec, PageRequest.of(page, rows));
         for (Post post : postPage) {
             post.setUser(userService.findUserById(post.getUserId()));
+            post.setCommentNum(commentService.countByPostId(post.getId()));
         }
         return new PageResult<>(postPage.getTotalElements(), postPage.getTotalPages(), postPage.getContent());
     }

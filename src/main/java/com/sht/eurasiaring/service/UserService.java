@@ -10,6 +10,7 @@ import com.sht.eurasiaring.exception.AllException;
 import com.sht.eurasiaring.utils.DateUtils;
 import com.sht.eurasiaring.utils.HttpClientUtils;
 import com.sht.eurasiaring.utils.JwtUtils;
+import com.sht.eurasiaring.utils.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;

@@ -1,12 +1,18 @@
 package com.sht.eurasiaring.controller;
 
 import com.sht.eurasiaring.entity.Post;
+import com.sht.eurasiaring.service.CommentService;
 import com.sht.eurasiaring.service.PostService;
+import com.sht.eurasiaring.service.UserService;
 import com.sht.eurasiaring.utils.JsonData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Hongtao Shen
@@ -18,6 +24,10 @@ public class PostController extends BaseController{
 
     @Autowired
     private PostService postService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private CommentService commentService;
 
     @PostMapping()
     public ResponseEntity<JsonData> save(@RequestBody Post post){
@@ -48,10 +58,23 @@ public class PostController extends BaseController{
     public ResponseEntity<JsonData> findByClassify(
             @RequestParam(name = "classifyId", required = false) Integer classifyId,
             @RequestParam(name = "matterId", required = false) Integer matterId,
+            @RequestParam(name = "searchName",required = false) String searchName,
             @RequestParam(name = "page", defaultValue = "0") Integer page,
             @RequestParam(name = "rows", defaultValue = "30") Integer rows
             ) {
-        return ResponseEntity.ok(JsonData.buildSuccess(postService.findByClassify(classifyId,matterId, page, rows), ""));
+        return ResponseEntity.ok(JsonData.buildSuccess(postService.findByClassify(classifyId,matterId,searchName, page, rows), ""));
+    }
+
+    @GetMapping("findByUserId")
+    public ResponseEntity<JsonData> findByUserId(){
+        Map<String, Object> map = new HashMap<>();
+        List<Post> byUserId = postService.findByUserId(userId);
+        for (Post post : byUserId) {
+            post.setCommentNum(commentService.countByPostId(post.getId()));
+        }
+        map.put("postList", byUserId);
+        map.put("user", userService.findUserById(userId));
+        return ResponseEntity.ok(JsonData.buildSuccess(map,""));
     }
 
 

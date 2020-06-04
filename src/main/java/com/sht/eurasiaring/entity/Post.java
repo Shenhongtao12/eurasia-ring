@@ -27,6 +27,7 @@ public class Post implements Serializable {
     private Integer userId;
     private Integer matterId;
     private Integer classifyId;
+    private Integer views;
     /**
      * 点赞数量
      */

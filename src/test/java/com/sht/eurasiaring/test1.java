@@ -26,7 +26,7 @@ public class test1 {
 
     @Test
     void array(){
-        String[] strings = new String[4];
+        /*String[] strings = new String[4];
         strings[0] = "111";
         strings[1] = "222";
         strings[2] = "333";
@@ -34,6 +34,10 @@ public class test1 {
         for (String string : strings) {
             a += string;
         }
-        System.out.println(a);
+        System.out.println(a);*/
+        String post = "aaaaaaaaaaaa";
+        String[] split = post.split(",");
+        System.out.println(split[0]);
+
     }
 }
