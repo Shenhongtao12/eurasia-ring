@@ -17,6 +17,7 @@ public class FansController extends BaseController{
 
     @PostMapping({"save"})
     public ResponseEntity save(@RequestBody Fans fans) {
+        fans.setFansId(userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(this.fansService.save(fans));
     }
 
@@ -28,10 +29,11 @@ public class FansController extends BaseController{
 
     @GetMapping({"findFansToUser"})
     public ResponseEntity findFansToUser(
+            @RequestParam(name = "userId", required = false) Integer userid,
                                          @RequestParam(name = "fansId", required = false) Integer fansId,
-                                         @RequestParam(name = "page", defaultValue = "1") Integer page,
-                                         @RequestParam(name = "rows", defaultValue = "10") Integer rows) {
-        return ResponseEntity.ok(this.fansService.findFansToUser(userId, fansId, page, rows));
+                                         @RequestParam(name = "page", defaultValue = "0") Integer page,
+                                         @RequestParam(name = "rows", defaultValue = "20") Integer rows) {
+        return ResponseEntity.ok(this.fansService.findFansToUser(userid, fansId, page, rows));
     }
 
 

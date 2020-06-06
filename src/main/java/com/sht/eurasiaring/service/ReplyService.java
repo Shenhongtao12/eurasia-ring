@@ -4,12 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.sht.eurasiaring.entity.Comment;
-import com.sht.eurasiaring.entity.Post;
-import com.sht.eurasiaring.entity.Praise;
+import com.sht.eurasiaring.entity.*;
 import com.sht.eurasiaring.repository.PraiseRepository;
 import com.sht.eurasiaring.repository.ReplyRepository;
-import com.sht.eurasiaring.entity.Reply;
 import com.sht.eurasiaring.exception.AllException;
 import com.sht.eurasiaring.utils.DateUtils;
 import com.sht.eurasiaring.utils.JsonData;
@@ -39,6 +36,8 @@ public class ReplyService {
     private PraiseRepository praiseRepository;
     @Autowired
     private CommentService commentService;
+    @Autowired
+    private FansService fansService;
 
 
     public int deleteByCommentId(Integer comid) {
@@ -151,11 +150,14 @@ public class ReplyService {
         }
 
 
-       /* //将关注装进集合
-        List<MessageUtils> fansList = replyRepository.findFans(userId);
-        if (fansList.size() > 0){
-            list.addAll(fansList);
-        }*/
+        //将关注装进集合
+        List<Fans> fansList = fansService.findByUserId(userId);
+        for (Fans fans : fansList) {
+            MessageUtils message = new MessageUtils();
+            message.setCreateTime(fans.getCreateTime());
+            message.setUser(userService.findUserById(fans.getFansId()));
+            messageUtilsList.add(message);
+        }
         //将点赞信息装进集合
         List<Praise> praiseList = praiseRepository.findByTypeUserId(userId);
         for (Praise praise : praiseList) {
@@ -185,7 +187,7 @@ public class ReplyService {
         }else {
             Collections.sort(messageUtilsList);
             redisTemplate.delete(String.valueOf(userId));
-            redisTemplate.delete("fans-" + userId);
+            redisTemplate.delete("eu_fans-" + userId);
             return JsonData.buildSuccess(messageUtilsList, "");
         }
     }

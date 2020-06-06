@@ -66,15 +66,20 @@ public class PostController extends BaseController{
     }
 
     @GetMapping("findByUserId")
-    public ResponseEntity<JsonData> findByUserId(){
+    public ResponseEntity<JsonData> findByUserId(@RequestParam(name = "id",required = false) Integer id){
         Map<String, Object> map = new HashMap<>();
-        List<Post> byUserId = postService.findByUserId(userId);
+        List<Post> byUserId = postService.findByUserId(id == null ? userId : id);
         for (Post post : byUserId) {
             post.setCommentNum(commentService.countByPostId(post.getId()));
         }
         map.put("postList", byUserId);
-        map.put("user", userService.findUserById(userId));
+        map.put("user", userService.findUserById(id == null ? userId : id));
         return ResponseEntity.ok(JsonData.buildSuccess(map,""));
+    }
+
+    @GetMapping("findByFansUserId")
+    public ResponseEntity<JsonData> findByFansUserId(){
+        return ResponseEntity.ok(JsonData.buildSuccess(postService.findByFansUserId(userId),""));
     }
 
 

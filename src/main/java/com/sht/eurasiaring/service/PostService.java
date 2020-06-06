@@ -1,6 +1,7 @@
 package com.sht.eurasiaring.service;
 
 import com.sht.eurasiaring.entity.Comment;
+import com.sht.eurasiaring.entity.Fans;
 import com.sht.eurasiaring.repository.PostRepository;
 import com.sht.eurasiaring.entity.Post;
 import com.sht.eurasiaring.repository.PraiseRepository;
@@ -19,6 +20,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -37,6 +39,8 @@ public class PostService {
     private UserService userService;
     @Autowired
     private PraiseRepository praiseRepository;
+    @Autowired
+    private FansService fansService;
 
     public PageResult<Post> init(){
         Page<Post> page = postRepository.findAll(PageRequest.of(0, 20));
@@ -134,5 +138,20 @@ public class PostService {
             post.setCommentNum(commentService.countByPostId(post.getId()));
         }
         return new PageResult<>(postPage.getTotalElements(), postPage.getTotalPages(), postPage.getContent());
+    }
+
+    public JsonData findByFansUserId(Integer userId) {
+        List<Post> postList = new ArrayList<>();
+        List<Fans> byFansId = fansService.findByFansId(userId);
+        for (Fans fans : byFansId) {
+            List<Post> byUserId = postRepository.findByUserId(fans.getUserId());
+            for (Post post : byUserId) {
+                post.setUser(userService.findUserById(post.getUserId()));
+                post.setCommentNum(commentService.countByPostId(post.getId()));
+            }
+            postList.addAll(byUserId);
+        }
+        Collections.sort(postList);
+        return JsonData.buildSuccess(postList,"未完成");
     }
 }

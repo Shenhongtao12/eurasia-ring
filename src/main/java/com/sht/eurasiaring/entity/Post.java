@@ -14,7 +14,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "eu_post")
-public class Post implements Serializable {
+public class Post implements Serializable,  Comparable<Post> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,4 +47,13 @@ public class Post implements Serializable {
     private User user;
     @Transient
     private List<Comment> commentList;
+
+    public int compareTo(Post o) {
+        if (getCreateTime().compareTo(o.getCreateTime()) > 0)
+            return -1;
+        else if (getCreateTime().compareTo(o.getCreateTime()) == 0) {
+            return 0;
+        }
+        return 1;
+    }
 }

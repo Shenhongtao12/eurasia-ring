@@ -86,7 +86,7 @@ public class FansService {
     }
 
     public boolean checkFans(Integer userId, Integer toUserId) {
-        return fansRepository.findByUserIdAndFansId(userId, toUserId) != null;
+        return fansRepository.findByUserIdAndFansId(toUserId, userId) != null;
     }
 
     public Integer countNum(String type, Integer UserId){
@@ -95,5 +95,12 @@ public class FansService {
         }else {
             return fansRepository.countByUserId(UserId);
         }
+    }
+
+    public List<Fans> findByUserId(Integer userId) {
+        return fansRepository.findByUserId(userId);
+    }
+    public List<Fans> findByFansId(Integer userId){
+        return fansRepository.findByFansId(userId);
     }
 }

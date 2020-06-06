@@ -104,10 +104,12 @@ public class UserService {
     public Integer getMessage(Integer userId) {
         //获取回复数量
         String reply = redisTemplate.boundValueOps("eurasia_" + userId).get();
-        if (reply == null){
-            return 0;
+        //获取关注的数量
+        Long fans = redisTemplate.opsForSet().size("eu_fans-" + userId);
+        if (reply == null) {
+            return fans.intValue();
         }
-        return Integer.parseInt(reply);
+        return Integer.parseInt(reply) + fans.intValue();
     }
 
     public User findUserById(Integer id){
