@@ -87,7 +87,7 @@ public class PraiseService {
                     praiseRepository.save(praiseInfo);
                     //给被点赞的新消息数+1
                     if (id != praiseInfo.getUserId()) {
-                        redisTemplate.boundValueOps("eurasia_" + id).increment(1);
+                        redisTemplate.boundValueOps("eu_praise_" + id).increment(1);
                     }
                     //点赞数量+1
                     updateMessage(num, 1);

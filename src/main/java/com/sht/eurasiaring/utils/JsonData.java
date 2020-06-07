@@ -1,12 +1,18 @@
 package com.sht.eurasiaring.utils;
 
-import java.io.Serializable;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
+import java.io.Serializable;
+@ApiModel("返回结果实体类")
 public class JsonData implements Serializable {
 
     private static final Long serialVersionUID = 1L;
+    @ApiModelProperty("响应码：0 成功 -1 失败")
     private Integer code;
+    @ApiModelProperty("响应的数据")
     private Object data;
+    @ApiModelProperty("响应提示信息")
     private String msg;
 
     public JsonData() {

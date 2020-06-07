@@ -11,6 +11,8 @@ database:
   username: root
   password: kindy0916
 spring:
+#  profiles:
+#    active: dev
   datasource:
     url: ${database.url}
     username: ${database.username}

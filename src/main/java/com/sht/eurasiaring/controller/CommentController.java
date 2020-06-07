@@ -3,12 +3,14 @@ package com.sht.eurasiaring.controller;
 import com.sht.eurasiaring.entity.Comment;
 import com.sht.eurasiaring.service.CommentService;
 import com.sht.eurasiaring.utils.JsonData;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping({"ring/comment"})
+@Api(tags = "留言服务")
 public class CommentController extends BaseController{
 
     @Autowired

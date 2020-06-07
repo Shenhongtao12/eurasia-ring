@@ -3,6 +3,7 @@ package com.sht.eurasiaring.controller;
 import com.sht.eurasiaring.entity.Classify;
 import com.sht.eurasiaring.service.ClassifyService;
 import com.sht.eurasiaring.utils.JsonData;
+import io.swagger.annotations.Api;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
  **/
 @RestController
 @RequestMapping("ring/classify")
+@Api(tags = "分类服务")
 public class ClassifyController {
 
     @Autowired

@@ -21,7 +21,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -78,8 +80,9 @@ public class FansService {
         for (Fans fans : fansPage) {
             if (userId != null) {
                 fans.setUser(this.userService.findUserById(fans.getFansId()));
+            }else {
+                fans.setUser(this.userService.findUserById(fans.getUserId()));
             }
-            fans.setUser(this.userService.findUserById(fans.getUserId()));
         }
 
         return new PageResult<>(fansPage.getTotalElements(), fansPage.getTotalPages(), fansPage.getContent());
@@ -87,6 +90,17 @@ public class FansService {
 
     public boolean checkFans(Integer userId, Integer toUserId) {
         return fansRepository.findByUserIdAndFansId(toUserId, userId) != null;
+    }
+
+    public Map<String, Object> findFans(Integer userId){
+        Map<String, Object> fans = new HashMap<>();
+        //我关注的数量
+        int Num1 = countNum("fans", userId);
+        //粉丝的数量
+        int Num2 = countNum("attention", userId);
+        fans.put("fans", Num2);
+        fans.put("attention", Num1);
+        return fans;
     }
 
     public Integer countNum(String type, Integer UserId){

@@ -1,5 +1,6 @@
 package com.sht.eurasiaring.entity;
 
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -14,6 +15,7 @@ import java.util.List;
 @Entity
 @Table(name = "eu_reply")
 @DynamicUpdate
+@ApiModel("回复实体类")
 public class Reply implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

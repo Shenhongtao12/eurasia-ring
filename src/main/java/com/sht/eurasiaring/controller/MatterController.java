@@ -3,6 +3,7 @@ package com.sht.eurasiaring.controller;
 import com.sht.eurasiaring.entity.Matter;
 import com.sht.eurasiaring.service.MatterService;
 import com.sht.eurasiaring.utils.JsonData;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
  **/
 @RestController
 @RequestMapping("ring/matter")
+@Api(tags = "热门事件")
 public class MatterController {
 
     @Autowired

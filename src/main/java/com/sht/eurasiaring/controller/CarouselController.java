@@ -3,6 +3,7 @@ package com.sht.eurasiaring.controller;
 import com.sht.eurasiaring.entity.Carousel;
 import com.sht.eurasiaring.service.CarouselService;
 import com.sht.eurasiaring.utils.JsonData;
+import io.swagger.annotations.Api;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
  **/
 @RestController
 @RequestMapping("ring/carousel")
+@Api(tags = "轮播图")
 public class CarouselController {
 
     @Autowired

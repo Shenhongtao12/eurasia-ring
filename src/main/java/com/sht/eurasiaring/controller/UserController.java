@@ -4,6 +4,7 @@ import com.sht.eurasiaring.entity.User;
 import com.sht.eurasiaring.service.FansService;
 import com.sht.eurasiaring.service.UserService;
 import com.sht.eurasiaring.utils.JsonData;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import java.util.Map;
  **/
 @RestController
 @RequestMapping("ring/user")
+@Api(tags = "用户服务")
 public class UserController extends BaseController{
     @Autowired
     private UserService userService;
@@ -36,7 +38,7 @@ public class UserController extends BaseController{
     }
 
     @GetMapping()
-    public ResponseEntity<Integer> getMessage(){
+    public ResponseEntity<JsonData> getMessage(@RequestParam(name = "type") String type){
         return ResponseEntity.ok(userService.getMessage(userId));
     }
 

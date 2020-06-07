@@ -2,9 +2,12 @@ package com.sht.eurasiaring.controller;
 
 import com.sht.eurasiaring.entity.Post;
 import com.sht.eurasiaring.service.CommentService;
+import com.sht.eurasiaring.service.FansService;
 import com.sht.eurasiaring.service.PostService;
 import com.sht.eurasiaring.service.UserService;
 import com.sht.eurasiaring.utils.JsonData;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +23,7 @@ import java.util.Map;
  **/
 @RestController
 @RequestMapping("/ring/post")
+@Api(tags = "帖子服务")
 public class PostController extends BaseController{
 
     @Autowired
@@ -28,8 +32,11 @@ public class PostController extends BaseController{
     private UserService userService;
     @Autowired
     private CommentService commentService;
+    @Autowired
+    private FansService fansService;
 
     @PostMapping()
+    @ApiOperation(value = "发布新帖子")
     public ResponseEntity<JsonData> save(@RequestBody Post post){
         post.setUserId(userId);
         return ResponseEntity.status(HttpStatus.OK).body(postService.save(post));
@@ -41,11 +48,13 @@ public class PostController extends BaseController{
     }
 
     @DeleteMapping
+    @ApiOperation(value = "删除帖子")
     public ResponseEntity<JsonData> delete(@RequestParam(name = "id") Integer id) {
         return ResponseEntity.status(HttpStatus.OK).body(postService.delete(id));
     }
 
     @GetMapping("{postId}")
+    @ApiOperation(value = "根据id查看帖子详情")
     public ResponseEntity<JsonData> findById(@PathVariable(name = "postId") Integer postId){
         Post result = postService.findById(postId, userId);
         if (result == null) {
@@ -55,6 +64,7 @@ public class PostController extends BaseController{
     }
 
     @GetMapping("findByClassifyOrMatter")
+    @ApiOperation(value = "多条件查询")
     public ResponseEntity<JsonData> findByClassify(
             @RequestParam(name = "classifyId", required = false) Integer classifyId,
             @RequestParam(name = "matterId", required = false) Integer matterId,
@@ -66,6 +76,7 @@ public class PostController extends BaseController{
     }
 
     @GetMapping("findByUserId")
+    @ApiOperation(value = "根据userId查询所属帖子")
     public ResponseEntity<JsonData> findByUserId(@RequestParam(name = "id",required = false) Integer id){
         Map<String, Object> map = new HashMap<>();
         List<Post> byUserId = postService.findByUserId(id == null ? userId : id);
@@ -74,10 +85,13 @@ public class PostController extends BaseController{
         }
         map.put("postList", byUserId);
         map.put("user", userService.findUserById(id == null ? userId : id));
+
+        map.put("fans", fansService.findFans(id == null ? userId : id));
         return ResponseEntity.ok(JsonData.buildSuccess(map,""));
     }
 
     @GetMapping("findByFansUserId")
+    @ApiOperation(value = "关注的人发布的帖子")
     public ResponseEntity<JsonData> findByFansUserId(){
         return ResponseEntity.ok(JsonData.buildSuccess(postService.findByFansUserId(userId),""));
     }

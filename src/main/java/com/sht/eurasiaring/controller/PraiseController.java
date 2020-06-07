@@ -2,6 +2,7 @@ package com.sht.eurasiaring.controller;
 
 import com.sht.eurasiaring.service.PraiseService;
 import com.sht.eurasiaring.utils.JsonData;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import java.util.Map;
  **/
 @RequestMapping("ring/praise")
 @RestController
+@Api(tags = "点赞服务")
 public class PraiseController extends BaseController {
     @Autowired
     private PraiseService praiseService;

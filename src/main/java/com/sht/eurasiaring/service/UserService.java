@@ -7,10 +7,7 @@ import com.sht.eurasiaring.entity.Carousel;
 import com.sht.eurasiaring.entity.Classify;
 import com.sht.eurasiaring.entity.User;
 import com.sht.eurasiaring.exception.AllException;
-import com.sht.eurasiaring.utils.DateUtils;
-import com.sht.eurasiaring.utils.HttpClientUtils;
-import com.sht.eurasiaring.utils.JwtUtils;
-import com.sht.eurasiaring.utils.PageResult;
+import com.sht.eurasiaring.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -55,10 +52,10 @@ public class UserService {
     public Map<String, Object> login(User user) {
         Map<String, Object> map = new HashMap<>();
         String url = "https://api.weixin.qq.com/sns/jscode2session?" +
-                "appid="+ APPID +
-                "&secret="+ SECRET +
-                "&js_code="+ user.getJs_code() +
-                "&grant_type="+ GRANT_TYPE;
+                "appid=" + APPID +
+                "&secret=" + SECRET +
+                "&js_code=" + user.getJs_code() +
+                "&grant_type=" + GRANT_TYPE;
         String data = HttpClientUtils.httpGet(url);
         User user1 = JSON.parseObject(data, User.class);
         if (user1.getErrcode() != null) {
@@ -68,11 +65,11 @@ public class UserService {
         user1.setAvatarUrl(user.getAvatarUrl());
         //查看该用户是否为老用户
         User byOpenid = userRepository.findByOpenid(user1.getOpenid());
-        if (byOpenid != null){
+        if (byOpenid != null) {
             //老用户就更新信息
             user1.setId(byOpenid.getId());
             user1.setCreateTime(byOpenid.getCreateTime());
-        }else {
+        } else {
             //新用户就设置首次登陆时间
             user1.setCreateTime(DateUtils.dateToString());
         }
@@ -81,10 +78,10 @@ public class UserService {
         String token = JwtUtils.geneJsonWebToken(user1);
         map.put("token", token);
         map.put("user", user);
-        return  map;
+        return map;
     }
 
-    public Map<String, Object> init(){
+    public Map<String, Object> init() {
         Map<String, Object> map = new HashMap<>();
 
         //轮播图数据
@@ -101,18 +98,27 @@ public class UserService {
         return map;
     }
 
-    public Integer getMessage(Integer userId) {
+    public JsonData getMessage(Integer userId) {
+
         //获取回复数量
         String reply = redisTemplate.boundValueOps("eurasia_" + userId).get();
+        int comNum = reply == null ? 0 : Integer.parseInt(reply);
+
         //获取关注的数量
         Long fans = redisTemplate.opsForSet().size("eu_fans-" + userId);
-        if (reply == null) {
-            return fans.intValue();
-        }
-        return Integer.parseInt(reply) + fans.intValue();
+        int fansNum = fans == null ? 0 : fans.intValue();
+
+        //获取点赞数量
+        String praise = redisTemplate.boundValueOps("eu_praise_" + userId).get();
+        int praiseNum = praise == null ? 0 : Integer.parseInt(praise);
+        Map<String, Integer> map = new HashMap<>();
+        map.put("comment", comNum);
+        map.put("fans", fansNum);
+        map.put("praise", praiseNum);
+        return JsonData.buildSuccess(map, "");
     }
 
-    public User findUserById(Integer id){
+    public User findUserById(Integer id) {
         return userRepository.findById(id).get();
     }
 }
