@@ -3,13 +3,19 @@ package com.sht.eurasiaring.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.ParameterBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.schema.ModelRef;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
+import springfox.documentation.service.Parameter;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Hongtao Shen
@@ -29,6 +35,13 @@ public class SwaggerConfig {
      */
     @Bean
     public Docket createRestApi() {
+
+        //添加head参数start
+        ParameterBuilder tokenPar = new ParameterBuilder();
+        List<Parameter> pars = new ArrayList<Parameter>();
+        tokenPar.name("token").description("令牌").modelRef(new ModelRef("string")).parameterType("header").required(false).build();
+        pars.add(tokenPar.build());
+
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .groupName("默认分组")
@@ -39,7 +52,8 @@ public class SwaggerConfig {
                 .apis(RequestHandlerSelectors.basePackage("com.sht.eurasiaring.controller"))
                 //过滤的路径  .paths(PathSelectors.ant("path"))
                 .paths(PathSelectors.any())
-                .build();
+                .build()
+                .globalOperationParameters(pars);// 设置请求头
     }
 
     /**
@@ -55,8 +69,8 @@ public class SwaggerConfig {
         return new ApiInfoBuilder()
                 .title("欧亚圈 APIs")
                 .description("测试api接口文档") //描述
-                .termsOfServiceUrl("localhost:8877/swagger-ui.html")
-                //.termsOfServiceUrl("https://eurasia.plus/swagger-ui.html")
+                //.termsOfServiceUrl("localhost:8877/swagger-ui.html")
+                .termsOfServiceUrl("https://eurasia.plus/swagger-ui.html")
                 .contact(contact)
                 .version("1.0")
                 .build();

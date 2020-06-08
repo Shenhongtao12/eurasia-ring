@@ -10,6 +10,7 @@ import com.sht.eurasiaring.utils.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -76,7 +77,7 @@ public class FansService {
                 return criteriaBuilder.and(list.toArray(new Predicate[list.size()]));
             }
         };
-        Page<Fans> fansPage = fansRepository.findAll(spec, PageRequest.of(page, rows));
+        Page<Fans> fansPage = fansRepository.findAll(spec, PageRequest.of(page, rows, Sort.by(Sort.Direction.DESC, "createTime")));
         for (Fans fans : fansPage) {
             if (userId != null) {
                 fans.setUser(this.userService.findUserById(fans.getFansId()));

@@ -56,6 +56,7 @@ public class CommentService {
     //删除留言和留言的回复
     public JsonData delete(Integer id) {
         int num = replyService.deleteByCommentId(id);
+        praiseRepository.deleteByTypeAndTypeId("comment", id);
         commentRepository.deleteById(id);
         return JsonData.buildSuccess("删除成功,并删除"+ num + "条回复内容");
     }

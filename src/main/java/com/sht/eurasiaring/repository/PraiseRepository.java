@@ -14,4 +14,7 @@ public interface PraiseRepository extends JpaRepository<Praise, Integer> {
     Praise findPraiseByTypeAndTypeIdAndUserId(String type, Integer typeId, Integer userId);
 
     List<Praise> findByTypeUserId(Integer userId);
+
+
+    void deleteByTypeAndTypeId(String type, Integer typeId);
 }

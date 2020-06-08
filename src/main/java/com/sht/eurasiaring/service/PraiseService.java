@@ -79,9 +79,9 @@ public class PraiseService {
                     } else if ("reply".equals(num[0].trim())) {
                         Reply reply = replyRepository.findById(Integer.valueOf(num[1])).get();
                         id = reply.getUserId();
-                    }else {
+                    } else {
                         Post post = postRepository.findById(Integer.valueOf(num[1])).get();
-                        id = post.getId();
+                        id = post.getUserId();
                     }
                     praiseInfo.setTypeUserId(id);
                     praiseRepository.save(praiseInfo);
@@ -101,11 +101,11 @@ public class PraiseService {
             Reply reply = replyRepository.findById(Integer.valueOf(type[1])).get();
             reply.setNumber(reply.getNumber() + num);
             replyRepository.save(reply);
-        } else if ("comment".equals(type[0].trim())){
+        } else if ("comment".equals(type[0].trim())) {
             Comment comment = commentRepository.findById(Integer.valueOf(type[1])).get();
             comment.setNumber(comment.getNumber() + num);
             commentRepository.save(comment);
-        }else {
+        } else {
             Post post = postRepository.findById(Integer.valueOf(type[1])).get();
             post.setNumber(post.getNumber() + num);
             postRepository.save(post);
@@ -113,8 +113,14 @@ public class PraiseService {
     }
 
     //查找点赞信息
-    public List<Praise> findByTypeUserId(Integer userId){
+    public List<Praise> findByTypeUserId(Integer userId) {
         return praiseRepository.findByTypeUserId(userId);
+    }
+
+    //删除点赞记录
+    public void deleteByType(String type, Integer typeId) {
+
+        praiseRepository.deleteByTypeAndTypeId(type, typeId);
     }
 
 }

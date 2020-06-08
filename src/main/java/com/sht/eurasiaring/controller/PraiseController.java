@@ -3,6 +3,7 @@ package com.sht.eurasiaring.controller;
 import com.sht.eurasiaring.service.PraiseService;
 import com.sht.eurasiaring.utils.JsonData;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ public class PraiseController extends BaseController {
     private PraiseService praiseService;
 
     @PostMapping()
+    @ApiOperation(value = "点赞", notes = "数据格式：\"type\":\"reply:600\",\"state\":\"1\" ")
     public ResponseEntity<JsonData> save(@RequestBody Map<String, Object> map) { // "type":"reply:600:600","state":"1"
         String type = map.get("type") + ":"+ userId;
         praiseService.save(type, map.get("state"));

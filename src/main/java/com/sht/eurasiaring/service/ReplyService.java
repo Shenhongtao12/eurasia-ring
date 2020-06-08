@@ -94,6 +94,7 @@ public class ReplyService {
                 replyRepository.save(byId);
             }
         }
+        praiseRepository.deleteByTypeAndTypeId("reply", id);
         this.replyRepository.deleteById(id);
         return JsonData.buildSuccess("成功");
     }
@@ -172,16 +173,24 @@ public class ReplyService {
                         Reply reply = replyRepository.findById(praise.getTypeId()).get();
                         Post post = postService.findPostById(reply.getPostId());
                         message.setName(post.getTitle());
+                        message.setContent(reply.getContent());
                         message.setImages(post.getImagesUrl().split(",")[0]);
+                        message.setType("comment");
+                        message.setPostId(post.getId());
                     } else if ("comment".equals(praise.getType())) {
                         Comment comment = commentService.findById(praise.getTypeId());
                         Post post = postService.findPostById(comment.getPostId());
+                        message.setContent(comment.getContent());
                         message.setName(post.getTitle());
                         message.setImages(post.getImagesUrl().split(",")[0]);
+                        message.setType("comment");
+                        message.setPostId(post.getId());
                     } else {
                         Post post = postService.findPostById(praise.getTypeId());
                         message.setName(post.getTitle());
                         message.setImages(post.getImagesUrl().split(",")[0]);
+                        message.setType("post");
+                        message.setPostId(post.getId());
                     }
                     messageUtilsList.add(message);
                 }
@@ -196,8 +205,15 @@ public class ReplyService {
             return JsonData.buildSuccess("无数据");
         } else {
             Collections.sort(messageUtilsList);
-            redisTemplate.delete(String.valueOf(userId));
-            redisTemplate.delete("eu_fans-" + userId);
+            if ("comment".equals(type)){
+                redisTemplate.delete("eurasia_" + userId);
+            }else if ("fans".equals(type)){
+                redisTemplate.delete("eu_fans-" + userId);
+
+            }else {
+                redisTemplate.delete("eu_praise_" + userId);
+
+            }
             return JsonData.buildSuccess(messageUtilsList, "");
         }
     }

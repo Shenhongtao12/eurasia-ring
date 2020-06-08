@@ -32,7 +32,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
         registry.addInterceptor(new JwtInterceptor())
                 .addPathPatterns("/ring/*/**")
-                .excludePathPatterns("/ring/user/login","/ring/user/init");
+                .excludePathPatterns("/ring/user/login","/ring/user/init","/ring/user/getToken");
 
         WebMvcConfigurer.super.addInterceptors(registry);
     }

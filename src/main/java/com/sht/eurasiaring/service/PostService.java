@@ -11,6 +11,7 @@ import com.sht.eurasiaring.utils.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -43,7 +44,7 @@ public class PostService {
     private FansService fansService;
 
     public PageResult<Post> init(){
-        Page<Post> page = postRepository.findAll(PageRequest.of(0, 20));
+        Page<Post> page = postRepository.findAll(PageRequest.of(0, 30, Sort.by(Sort.Direction.DESC, "createTime")));
         for (Post post : page) {
             String[] split = post.getImagesUrl().split(",");
             post.setImagesUrl(split[0]);
