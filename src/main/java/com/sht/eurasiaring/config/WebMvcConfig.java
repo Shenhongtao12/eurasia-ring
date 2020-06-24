@@ -2,7 +2,10 @@ package com.sht.eurasiaring.config;
 
 import com.sht.eurasiaring.interceptor.JwtInterceptor;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 //@Configuration
 //public class InterceptorConfig extends WebMvcConfigurationSupport {
@@ -23,7 +26,7 @@ import org.springframework.web.servlet.config.annotation.*;
 //}
 
 @Configuration
-public class InterceptorConfig implements WebMvcConfigurer {
+public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
 
