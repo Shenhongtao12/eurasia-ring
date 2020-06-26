@@ -56,6 +56,13 @@ public class UserService {
                 "&secret=" + SECRET +
                 "&js_code=" + user.getJs_code() +
                 "&grant_type=" + GRANT_TYPE;
+        if (user.getFlag() == 2){
+            url = "https://api.weixin.qq.com/sns/jscode2session?" +
+                    "appid=" + "wx99ef068dd517514f" +
+                    "&secret=" + "a50dd3326de4f70b26b30bfb1c94cb1c" +
+                    "&js_code=" + user.getJs_code() +
+                    "&grant_type=" + "authorization_code";
+        }
         String data = HttpClientUtils.httpGet(url);
         User user1 = JSON.parseObject(data, User.class);
         if (user1.getErrcode() != null) {

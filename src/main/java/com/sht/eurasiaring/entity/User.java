@@ -62,4 +62,7 @@ public class User implements Serializable {
     @Transient
     private Integer errcode;
 
+    @Transient
+    private Integer flag;
+
 }
